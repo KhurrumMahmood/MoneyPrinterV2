@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CiteVideo Reader</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">Evidence Reader</div>
+          <h1 id="topic-title">Loading topic...</h1>
+          <p id="topic-summary" class="hero-summary"></p>
+          <div class="hero-meta">
+            <span id="meta-version" class="meta-pill"></span>
+            <span id="meta-reviewed" class="meta-pill"></span>
+            <span id="meta-run" class="meta-pill"></span>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="card-label">What This View Is For</div>
+          <p>
+            Review the evidence package, inspect caveats and audits, and ask grounded
+            questions that stay inside the approved material.
+          </p>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="panel metrics-panel">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker">Snapshot</div>
+              <h2>Package Health</h2>
+            </div>
+          </div>
+          <div id="metrics-grid" class="metrics-grid"></div>
+        </section>
+
+        <aside class="panel chat-panel">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker">Grounded Chat</div>
+              <h2>Ask The Package</h2>
+            </div>
+          </div>
+          <div class="suggestions" id="suggestions"></div>
+          <form id="chat-form" class="chat-form">
+            <textarea
+              id="chat-question"
+              rows="4"
+              placeholder="Ask about a claim, harm, contradiction, or cited source..."
+            ></textarea>
+            <button type="submit">Ask Grounded Question</button>
+          </form>
+          <div id="chat-response" class="chat-response empty">
+            Ask a question to see a citation-backed answer from the approved package.
+          </div>
+        </aside>
+
+        <section class="panel wide">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker">Claims</div>
+              <h2>Evidence Cards</h2>
+            </div>
+          </div>
+          <div id="claims-grid" class="claims-grid"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker">Caveats</div>
+              <h2>Harms And Limits</h2>
+            </div>
+          </div>
+          <ul id="caveats-list" class="stack-list"></ul>
+        </section>
+
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker">Topic Hub</div>
+              <h2>Living Summary</h2>
+            </div>
+          </div>
+          <div id="hub-summary" class="hub-summary"></div>
+          <div id="hub-runs" class="pill-row"></div>
+        </section>
+
+        <section class="panel wide">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker">Audits</div>
+              <h2>Feedback Loop</h2>
+            </div>
+          </div>
+          <div id="audit-grid" class="audit-grid"></div>
+        </section>
+
+        <section class="panel wide">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker">Sources</div>
+              <h2>Attribution Trail</h2>
+            </div>
+          </div>
+          <div id="sources-list" class="sources-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+  </html>

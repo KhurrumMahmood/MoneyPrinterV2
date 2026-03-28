@@ -42,6 +42,8 @@ def _score_record(query_tokens: list[str], record: dict[str, Any]) -> int:
     score = sum(record_tokens[token] for token in query_tokens)
     if record.get("record_type") == "claim":
         score += 2
+    if record.get("source_ids"):
+        score += 1
     return score
 
 
@@ -79,7 +81,8 @@ def answer_grounded_question(run_dir: str, question: str, max_records: int = 3) 
     matches = [record for record in ranked_records if _score_record(query_tokens, record) > 0]
     claim_matches = [record for record in matches if record.get("record_type") == "claim"]
     if claim_matches:
-        matches = claim_matches[:max_records]
+        sourced_claim_matches = [record for record in claim_matches if record.get("source_ids")]
+        matches = (sourced_claim_matches or claim_matches)[:max_records]
     else:
         matches = matches[:max_records]
 

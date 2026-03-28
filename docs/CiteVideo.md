@@ -83,11 +83,35 @@ Validated in this branch:
 - `python3 -m unittest tests.test_topic_package`
 - `python3 -m compileall citevideo`
 - `python3 -c "from citevideo.pipeline import run_package_exports; run_package_exports('workspace/ben-azadi-stem-cells')"`
+- `python3 -m citevideo.web.server workspace/ben-azadi-stem-cells --port 4174`
+- Remotion preview render:
+  `/Users/khurrummahmood/.nvm/versions/node/v22.21.1/bin/node node_modules/tsx/dist/cli.mjs render.ts spec.json ../workspace/ben-azadi-stem-cells/output/remotion-feedback.mp4`
 
-Those checks confirm package generation, audits, dossier export, topic-hub aggregation, and grounded chat scaffolding are working on a real sample run.
+Those checks confirm package generation, audits, dossier export, topic-hub aggregation, the local reader UI, grounded chat, and a Remotion preview render are working on a real sample run.
+
+## Local Feedback Loop
+
+Reader UI:
+
+- Run `python3 -m citevideo.web.server workspace/<run_id> --port 4174`
+- Open `http://127.0.0.1:4174`
+- Review:
+  - dossier summary
+  - claim cards
+  - harms / caveats
+  - audit findings
+  - grounded answers with citations
+
+Render preview:
+
+- Ensure `remotion/node_modules` is installed or linked locally.
+- From `remotion/`, run:
+  `/Users/khurrummahmood/.nvm/versions/node/v22.21.1/bin/node node_modules/tsx/dist/cli.mjs render.ts spec.json ../workspace/<run_id>/output/remotion-feedback.mp4`
+- Extract preview frames or inspect the rendered MP4 before iterating on scripts, delivery manifests, or scene design.
 
 ## Known Gaps
 
-- The grounded chat helper is retrieval-only and still needs a reader UI.
-- Remotion changes are implemented, but full render verification in this isolated worktree is still pending.
-- The evidence package is export-first today; interactive web surfaces come next.
+- The grounded chat helper is retrieval-only; it is useful for evidence drill-down but not yet conversationally sophisticated.
+- The reader UI is intentionally lightweight and local-first; a richer production web surface still needs to be designed.
+- Remotion preview rendering works in this worktree when local dependencies are available, but the setup should be made more reproducible.
+- The evidence package is export-first today; broader interactive web workflows come next.
