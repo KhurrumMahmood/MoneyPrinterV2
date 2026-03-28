@@ -1,0 +1,2071 @@
+{
+  "meta": {
+    "runId": "glycine-poc-001",
+    "title": "The 2-Week Experiment That Recovered Liver Health",
+    "fps": 30,
+    "width": 1080,
+    "height": 1920,
+    "totalDurationFrames": 5160,
+    "totalDurationMs": 172050
+  },
+  "brand": {
+    "colors": {
+      "primary": "#0f1419",
+      "secondary": "#1a2332",
+      "accent": "#14b8a6",
+      "text": "#f0ece4",
+      "textSecondary": "#94a3b8",
+      "success": "#22c55e",
+      "warning": "#f59e0b",
+      "danger": "#fb7185"
+    },
+    "fonts": {
+      "heading": "Inter",
+      "body": "Inter"
+    }
+  },
+  "audio": {},
+  "scenes": [
+    {
+      "sceneId": "scene_001",
+      "type": "title",
+      "heading": "The 2-Week Experiment That Recovered Liver Health",
+      "narration": "There's an amino acid your body makes on its own. It's considered non-essential \u2014 until your health starts failing. When that happens, this molecule gets drained faster than your body can replace it. And a recent experiment suggests that just two weeks of supplementing it could turn things around.",
+      "durationMs": 20700,
+      "durationFrames": 621,
+      "mood": "curiosity",
+      "evidenceStrength": "moderate",
+      "evidenceColor": "#14b8a6",
+      "claimsReferenced": [
+        "glycine-liver-recovery"
+      ],
+      "visualNotes": "Extreme close-up macro photography of glowing white crystalline powder on a dark reflective obsidian surface, dramatic volumetric cyan-teal light beam illuminating crystal texture, shallow depth of field, hyper-realistic, high contrast, cinematic lighting",
+      "keywords": [
+        "Glycine",
+        "Liver",
+        "2 Weeks"
+      ],
+      "imagePath": "glycine-poc/images/scene_001.jpg",
+      "audioPath": "glycine-poc/audio/scene_001.wav",
+      "wordTimings": [
+        {
+          "word": "There's",
+          "startMs": 0,
+          "endMs": 300
+        },
+        {
+          "word": "an",
+          "startMs": 300,
+          "endMs": 520
+        },
+        {
+          "word": "amino",
+          "startMs": 520,
+          "endMs": 840
+        },
+        {
+          "word": "acid",
+          "startMs": 840,
+          "endMs": 1360
+        },
+        {
+          "word": "your",
+          "startMs": 1840,
+          "endMs": 1960
+        },
+        {
+          "word": "body",
+          "startMs": 1960,
+          "endMs": 2340
+        },
+        {
+          "word": "makes",
+          "startMs": 2340,
+          "endMs": 2580
+        },
+        {
+          "word": "on",
+          "startMs": 2580,
+          "endMs": 2780
+        },
+        {
+          "word": "its",
+          "startMs": 2780,
+          "endMs": 2980
+        },
+        {
+          "word": "own.",
+          "startMs": 2980,
+          "endMs": 3200
+        },
+        {
+          "word": "It's",
+          "startMs": 3980,
+          "endMs": 4140
+        },
+        {
+          "word": "considered",
+          "startMs": 4140,
+          "endMs": 4560
+        },
+        {
+          "word": "non-essential",
+          "startMs": 4560,
+          "endMs": 5300
+        },
+        {
+          "word": "until",
+          "startMs": 5780,
+          "endMs": 6200
+        },
+        {
+          "word": "your",
+          "startMs": 6200,
+          "endMs": 6480
+        },
+        {
+          "word": "health",
+          "startMs": 6480,
+          "endMs": 6840
+        },
+        {
+          "word": "starts",
+          "startMs": 6840,
+          "endMs": 7360
+        },
+        {
+          "word": "failing.",
+          "startMs": 7360,
+          "endMs": 7740
+        },
+        {
+          "word": "When",
+          "startMs": 8380,
+          "endMs": 8660
+        },
+        {
+          "word": "that",
+          "startMs": 8660,
+          "endMs": 8860
+        },
+        {
+          "word": "happens,",
+          "startMs": 8860,
+          "endMs": 9320
+        },
+        {
+          "word": "this",
+          "startMs": 9720,
+          "endMs": 9960
+        },
+        {
+          "word": "molecule",
+          "startMs": 9960,
+          "endMs": 10340
+        },
+        {
+          "word": "gets",
+          "startMs": 10340,
+          "endMs": 10800
+        },
+        {
+          "word": "drained",
+          "startMs": 10800,
+          "endMs": 11180
+        },
+        {
+          "word": "faster",
+          "startMs": 11180,
+          "endMs": 11920
+        },
+        {
+          "word": "than",
+          "startMs": 11920,
+          "endMs": 12120
+        },
+        {
+          "word": "your",
+          "startMs": 12120,
+          "endMs": 12260
+        },
+        {
+          "word": "body",
+          "startMs": 12260,
+          "endMs": 12560
+        },
+        {
+          "word": "can",
+          "startMs": 12560,
+          "endMs": 12740
+        },
+        {
+          "word": "replace",
+          "startMs": 12740,
+          "endMs": 13100
+        },
+        {
+          "word": "it.",
+          "startMs": 13100,
+          "endMs": 13380
+        },
+        {
+          "word": "And",
+          "startMs": 14080,
+          "endMs": 14220
+        },
+        {
+          "word": "a",
+          "startMs": 14220,
+          "endMs": 14320
+        },
+        {
+          "word": "recent",
+          "startMs": 14320,
+          "endMs": 14660
+        },
+        {
+          "word": "experiment",
+          "startMs": 14660,
+          "endMs": 15300
+        },
+        {
+          "word": "suggests",
+          "startMs": 15300,
+          "endMs": 15740
+        },
+        {
+          "word": "that",
+          "startMs": 16149,
+          "endMs": 16500
+        },
+        {
+          "word": "just",
+          "startMs": 16500,
+          "endMs": 16700
+        },
+        {
+          "word": "two",
+          "startMs": 16700,
+          "endMs": 17100
+        },
+        {
+          "word": "weeks",
+          "startMs": 17100,
+          "endMs": 17320
+        },
+        {
+          "word": "of",
+          "startMs": 17320,
+          "endMs": 17520
+        },
+        {
+          "word": "supplementing",
+          "startMs": 17520,
+          "endMs": 18160
+        },
+        {
+          "word": "it",
+          "startMs": 18160,
+          "endMs": 18320
+        },
+        {
+          "word": "could",
+          "startMs": 18320,
+          "endMs": 18700
+        },
+        {
+          "word": "turn",
+          "startMs": 18700,
+          "endMs": 19040
+        },
+        {
+          "word": "things",
+          "startMs": 19040,
+          "endMs": 19320
+        },
+        {
+          "word": "around.",
+          "startMs": 19320,
+          "endMs": 19720
+        }
+      ]
+    },
+    {
+      "sceneId": "scene_002",
+      "type": "talking_point",
+      "heading": "Your Body Makes Glycine \u2014 But Not Enough",
+      "narration": "Glycine is the simplest amino acid. Your body produces it, so it's labeled non-essential. But in people with fatty liver disease, blood glycine levels drop significantly. The body's four production pathways all get disrupted \u2014 threonine and serine aren't converting properly, and the enzymes that break down glycine become overactive. Less production, more destruction.",
+      "durationMs": 26850,
+      "durationFrames": 805,
+      "mood": "informative",
+      "evidenceStrength": "moderate",
+      "evidenceColor": "#14b8a6",
+      "claimsReferenced": [
+        "glycine-depletion"
+      ],
+      "visualNotes": "Bioluminescent human body silhouette showing glowing metabolic pathways and energy streams flowing inside, some pathways dimming and fading to dark amber, dark background, scientific medical visualization, vibrant teal and warm amber colors, cinematic",
+      "keywords": [
+        "Non-Essential",
+        "Depleted",
+        "Fatty Liver"
+      ],
+      "imagePath": "glycine-poc/images/scene_002.jpg",
+      "audioPath": "glycine-poc/audio/scene_002.wav",
+      "citations": [
+        {
+          "label": "Gaggini et al. 2024",
+          "detail": "Glycine metabolism in fatty liver disease"
+        }
+      ],
+      "wordTimings": [
+        {
+          "word": "Glycine",
+          "startMs": 0,
+          "endMs": 620
+        },
+        {
+          "word": "is",
+          "startMs": 620,
+          "endMs": 880
+        },
+        {
+          "word": "the",
+          "startMs": 880,
+          "endMs": 1020
+        },
+        {
+          "word": "simplest",
+          "startMs": 1020,
+          "endMs": 1500
+        },
+        {
+          "word": "amino",
+          "startMs": 1500,
+          "endMs": 1860
+        },
+        {
+          "word": "acid.",
+          "startMs": 1860,
+          "endMs": 2340
+        },
+        {
+          "word": "Your",
+          "startMs": 3060,
+          "endMs": 3180
+        },
+        {
+          "word": "body",
+          "startMs": 3180,
+          "endMs": 3480
+        },
+        {
+          "word": "produces",
+          "startMs": 3480,
+          "endMs": 3980
+        },
+        {
+          "word": "it,",
+          "startMs": 3980,
+          "endMs": 4280
+        },
+        {
+          "word": "so",
+          "startMs": 4460,
+          "endMs": 4660
+        },
+        {
+          "word": "it's",
+          "startMs": 4660,
+          "endMs": 4860
+        },
+        {
+          "word": "labeled",
+          "startMs": 4860,
+          "endMs": 5160
+        },
+        {
+          "word": "non-essential.",
+          "startMs": 5160,
+          "endMs": 6160
+        },
+        {
+          "word": "But",
+          "startMs": 6920,
+          "endMs": 7120
+        },
+        {
+          "word": "in",
+          "startMs": 7120,
+          "endMs": 7220
+        },
+        {
+          "word": "people",
+          "startMs": 7220,
+          "endMs": 7560
+        },
+        {
+          "word": "with",
+          "startMs": 7560,
+          "endMs": 7820
+        },
+        {
+          "word": "fatty",
+          "startMs": 7820,
+          "endMs": 8100
+        },
+        {
+          "word": "liver",
+          "startMs": 8100,
+          "endMs": 8420
+        },
+        {
+          "word": "disease,",
+          "startMs": 8420,
+          "endMs": 8840
+        },
+        {
+          "word": "blood",
+          "startMs": 9540,
+          "endMs": 9660
+        },
+        {
+          "word": "glycine",
+          "startMs": 9660,
+          "endMs": 10280
+        },
+        {
+          "word": "levels",
+          "startMs": 10280,
+          "endMs": 10540
+        },
+        {
+          "word": "drop",
+          "startMs": 10540,
+          "endMs": 10900
+        },
+        {
+          "word": "significantly.",
+          "startMs": 10900,
+          "endMs": 11540
+        },
+        {
+          "word": "The",
+          "startMs": 12480,
+          "endMs": 12600
+        },
+        {
+          "word": "body's",
+          "startMs": 12600,
+          "endMs": 13060
+        },
+        {
+          "word": "four",
+          "startMs": 13060,
+          "endMs": 13280
+        },
+        {
+          "word": "production",
+          "startMs": 13280,
+          "endMs": 13660
+        },
+        {
+          "word": "pathways",
+          "startMs": 13660,
+          "endMs": 14260
+        },
+        {
+          "word": "all",
+          "startMs": 14260,
+          "endMs": 14700
+        },
+        {
+          "word": "get",
+          "startMs": 14700,
+          "endMs": 14880
+        },
+        {
+          "word": "disrupted",
+          "startMs": 14880,
+          "endMs": 15320
+        },
+        {
+          "word": "threonine",
+          "startMs": 16000,
+          "endMs": 16340
+        },
+        {
+          "word": "and",
+          "startMs": 16580,
+          "endMs": 16940
+        },
+        {
+          "word": "serine",
+          "startMs": 16940,
+          "endMs": 17420
+        },
+        {
+          "word": "aren't",
+          "startMs": 17420,
+          "endMs": 17880
+        },
+        {
+          "word": "converting",
+          "startMs": 17880,
+          "endMs": 18280
+        },
+        {
+          "word": "properly,",
+          "startMs": 18280,
+          "endMs": 18800
+        },
+        {
+          "word": "and",
+          "startMs": 19240,
+          "endMs": 19520
+        },
+        {
+          "word": "the",
+          "startMs": 19520,
+          "endMs": 19660
+        },
+        {
+          "word": "enzymes",
+          "startMs": 19660,
+          "endMs": 20040
+        },
+        {
+          "word": "that",
+          "startMs": 20040,
+          "endMs": 20400
+        },
+        {
+          "word": "break",
+          "startMs": 20400,
+          "endMs": 20680
+        },
+        {
+          "word": "down",
+          "startMs": 20680,
+          "endMs": 20960
+        },
+        {
+          "word": "glycine",
+          "startMs": 20960,
+          "endMs": 21640
+        },
+        {
+          "word": "become",
+          "startMs": 21640,
+          "endMs": 21960
+        },
+        {
+          "word": "overactive.",
+          "startMs": 21960,
+          "endMs": 22660
+        },
+        {
+          "word": "Less",
+          "startMs": 23600,
+          "endMs": 23780
+        },
+        {
+          "word": "production,",
+          "startMs": 23780,
+          "endMs": 24280
+        },
+        {
+          "word": "more",
+          "startMs": 24840,
+          "endMs": 25180
+        },
+        {
+          "word": "destruction.",
+          "startMs": 25180,
+          "endMs": 25740
+        }
+      ]
+    },
+    {
+      "sceneId": "scene_003",
+      "type": "image",
+      "heading": "Four Pathways, All Disrupted",
+      "narration": "Here's what makes this compelling. It's not just one pathway going wrong \u2014 it's four. Threonine, serine, and sarcosine normally convert to glycine, but in liver disease these conversions slow down. Meanwhile, the enzyme DAO actively breaks glycine down into glyoxylate. And AGXT1, the enzyme that converts glyoxylate back to glycine, becomes less active. The glycine pool gets hit from every direction.",
+      "durationMs": 30000,
+      "durationFrames": 900,
+      "mood": "analytical",
+      "evidenceStrength": "moderate",
+      "evidenceColor": "#14b8a6",
+      "claimsReferenced": [
+        "glycine-pathways"
+      ],
+      "visualNotes": "Detailed medical infographic showing four metabolic pathways converging on a central liver organ, clean diagram style with labeled arrows, three pathways marked with red X symbols showing they are blocked, one pathway marked with a dim glow showing it is weakened, dark background, teal and amber color scheme, professional scientific illustration, no text labels, no words, cinematic lighting",
+      "keywords": [
+        "4 Pathways",
+        "Disrupted"
+      ],
+      "imagePath": "glycine-poc/images/scene_003.jpg",
+      "audioPath": "glycine-poc/audio/scene_003.wav",
+      "wordTimings": [
+        {
+          "word": "Here's",
+          "startMs": 0,
+          "endMs": 500
+        },
+        {
+          "word": "what",
+          "startMs": 500,
+          "endMs": 800
+        },
+        {
+          "word": "makes",
+          "startMs": 800,
+          "endMs": 1020
+        },
+        {
+          "word": "this",
+          "startMs": 1020,
+          "endMs": 1280
+        },
+        {
+          "word": "compelling.",
+          "startMs": 1280,
+          "endMs": 1700
+        },
+        {
+          "word": "It's",
+          "startMs": 2320,
+          "endMs": 2600
+        },
+        {
+          "word": "not",
+          "startMs": 2600,
+          "endMs": 2740
+        },
+        {
+          "word": "just",
+          "startMs": 2740,
+          "endMs": 2960
+        },
+        {
+          "word": "one",
+          "startMs": 2960,
+          "endMs": 3340
+        },
+        {
+          "word": "pathway",
+          "startMs": 3340,
+          "endMs": 3840
+        },
+        {
+          "word": "going",
+          "startMs": 3840,
+          "endMs": 4180
+        },
+        {
+          "word": "wrong",
+          "startMs": 4180,
+          "endMs": 4440
+        },
+        {
+          "word": "it's",
+          "startMs": 5060,
+          "endMs": 5240
+        },
+        {
+          "word": "four.",
+          "startMs": 5240,
+          "endMs": 5500
+        },
+        {
+          "word": "Threonine,",
+          "startMs": 6400,
+          "endMs": 6920
+        },
+        {
+          "word": "serine,",
+          "startMs": 7440,
+          "endMs": 7700
+        },
+        {
+          "word": "and",
+          "startMs": 7920,
+          "endMs": 8080
+        },
+        {
+          "word": "sarcosine",
+          "startMs": 8080,
+          "endMs": 8540
+        },
+        {
+          "word": "normally",
+          "startMs": 8540,
+          "endMs": 9100
+        },
+        {
+          "word": "convert",
+          "startMs": 9100,
+          "endMs": 9560
+        },
+        {
+          "word": "to",
+          "startMs": 9560,
+          "endMs": 9800
+        },
+        {
+          "word": "glycine,",
+          "startMs": 9800,
+          "endMs": 10320
+        },
+        {
+          "word": "but",
+          "startMs": 10900,
+          "endMs": 11020
+        },
+        {
+          "word": "in",
+          "startMs": 11020,
+          "endMs": 11140
+        },
+        {
+          "word": "liver",
+          "startMs": 11140,
+          "endMs": 11360
+        },
+        {
+          "word": "disease",
+          "startMs": 11360,
+          "endMs": 11660
+        },
+        {
+          "word": "these",
+          "startMs": 11940,
+          "endMs": 12080
+        },
+        {
+          "word": "conversions",
+          "startMs": 12080,
+          "endMs": 12500
+        },
+        {
+          "word": "slow",
+          "startMs": 12500,
+          "endMs": 12880
+        },
+        {
+          "word": "down.",
+          "startMs": 12880,
+          "endMs": 13200
+        },
+        {
+          "word": "Meanwhile,",
+          "startMs": 13880,
+          "endMs": 14280
+        },
+        {
+          "word": "the",
+          "startMs": 14640,
+          "endMs": 14780
+        },
+        {
+          "word": "enzyme",
+          "startMs": 14780,
+          "endMs": 15060
+        },
+        {
+          "word": "DAO",
+          "startMs": 15060,
+          "endMs": 15400
+        },
+        {
+          "word": "actively",
+          "startMs": 15400,
+          "endMs": 16260
+        },
+        {
+          "word": "breaks",
+          "startMs": 16260,
+          "endMs": 16640
+        },
+        {
+          "word": "glycine",
+          "startMs": 16640,
+          "endMs": 17260
+        },
+        {
+          "word": "down",
+          "startMs": 17260,
+          "endMs": 17540
+        },
+        {
+          "word": "into",
+          "startMs": 17540,
+          "endMs": 17860
+        },
+        {
+          "word": "glyoxylate.",
+          "startMs": 17860,
+          "endMs": 18660
+        },
+        {
+          "word": "And",
+          "startMs": 19380,
+          "endMs": 19520
+        },
+        {
+          "word": "AGXT1,",
+          "startMs": 19520,
+          "endMs": 20580
+        },
+        {
+          "word": "the",
+          "startMs": 21100,
+          "endMs": 21220
+        },
+        {
+          "word": "enzyme",
+          "startMs": 21220,
+          "endMs": 21500
+        },
+        {
+          "word": "that",
+          "startMs": 21500,
+          "endMs": 21740
+        },
+        {
+          "word": "converts",
+          "startMs": 21740,
+          "endMs": 22080
+        },
+        {
+          "word": "glyoxylate",
+          "startMs": 22080,
+          "endMs": 22920
+        },
+        {
+          "word": "back",
+          "startMs": 22920,
+          "endMs": 23100
+        },
+        {
+          "word": "to",
+          "startMs": 23100,
+          "endMs": 23300
+        },
+        {
+          "word": "glycine,",
+          "startMs": 23300,
+          "endMs": 23900
+        },
+        {
+          "word": "becomes",
+          "startMs": 24080,
+          "endMs": 24520
+        },
+        {
+          "word": "less",
+          "startMs": 24520,
+          "endMs": 24880
+        },
+        {
+          "word": "active.",
+          "startMs": 24880,
+          "endMs": 25240
+        },
+        {
+          "word": "The",
+          "startMs": 25240,
+          "endMs": 26140
+        },
+        {
+          "word": "glycine",
+          "startMs": 26140,
+          "endMs": 26680
+        },
+        {
+          "word": "pool",
+          "startMs": 26680,
+          "endMs": 26940
+        },
+        {
+          "word": "gets",
+          "startMs": 26940,
+          "endMs": 27400
+        },
+        {
+          "word": "hit",
+          "startMs": 27400,
+          "endMs": 27680
+        },
+        {
+          "word": "from",
+          "startMs": 27680,
+          "endMs": 27900
+        },
+        {
+          "word": "every",
+          "startMs": 27900,
+          "endMs": 28340
+        },
+        {
+          "word": "direction.",
+          "startMs": 28340,
+          "endMs": 28800
+        }
+      ]
+    },
+    {
+      "sceneId": "scene_004",
+      "type": "citation",
+      "heading": "Blocking Glycine Recovery Worsens Liver Disease",
+      "narration": "The animal evidence goes beyond correlation. When researchers knocked out the AGXT1 gene \u2014 removing just one of glycine's four production pathways \u2014 liver disease scores got significantly worse. And when they supplemented glycine directly, liver health improved. This isn't just an association anymore. It's a causal link.",
+      "durationMs": 22500,
+      "durationFrames": 675,
+      "mood": "evidence",
+      "evidenceStrength": "strong",
+      "evidenceColor": "#22c55e",
+      "claimsReferenced": [
+        "glycine-causal-evidence"
+      ],
+      "visualNotes": "Split view of liver tissue under microscope, left side showing unhealthy fatty deposits glowing in warm amber tones, right side showing healthy regenerated tissue with vibrant bioluminescent teal-green light, dramatic medical photography, high contrast, cinematic",
+      "imagePath": "glycine-poc/images/scene_004.jpg",
+      "audioPath": "glycine-poc/audio/scene_004.wav",
+      "citations": [
+        {
+          "label": "Gaggini et al. 2024",
+          "detail": "AGXT1 knockout + glycine supplementation in mice"
+        }
+      ],
+      "wordTimings": [
+        {
+          "word": "The",
+          "startMs": 0,
+          "endMs": 120
+        },
+        {
+          "word": "animal",
+          "startMs": 120,
+          "endMs": 460
+        },
+        {
+          "word": "evidence",
+          "startMs": 460,
+          "endMs": 860
+        },
+        {
+          "word": "goes",
+          "startMs": 860,
+          "endMs": 1180
+        },
+        {
+          "word": "beyond",
+          "startMs": 1180,
+          "endMs": 1680
+        },
+        {
+          "word": "correlation.",
+          "startMs": 1680,
+          "endMs": 2360
+        },
+        {
+          "word": "When",
+          "startMs": 3120,
+          "endMs": 3260
+        },
+        {
+          "word": "researchers",
+          "startMs": 3260,
+          "endMs": 3720
+        },
+        {
+          "word": "knocked",
+          "startMs": 3720,
+          "endMs": 4160
+        },
+        {
+          "word": "out",
+          "startMs": 4160,
+          "endMs": 4500
+        },
+        {
+          "word": "the",
+          "startMs": 4500,
+          "endMs": 4700
+        },
+        {
+          "word": "AGXT1",
+          "startMs": 4700,
+          "endMs": 5420
+        },
+        {
+          "word": "gene",
+          "startMs": 5720,
+          "endMs": 6060
+        },
+        {
+          "word": "removing",
+          "startMs": 6740,
+          "endMs": 6860
+        },
+        {
+          "word": "just",
+          "startMs": 6860,
+          "endMs": 7160
+        },
+        {
+          "word": "one",
+          "startMs": 7160,
+          "endMs": 7580
+        },
+        {
+          "word": "of",
+          "startMs": 7580,
+          "endMs": 7800
+        },
+        {
+          "word": "glycine's",
+          "startMs": 7800,
+          "endMs": 8480
+        },
+        {
+          "word": "four",
+          "startMs": 8480,
+          "endMs": 8680
+        },
+        {
+          "word": "production",
+          "startMs": 8680,
+          "endMs": 9140
+        },
+        {
+          "word": "pathways",
+          "startMs": 9140,
+          "endMs": 9720
+        },
+        {
+          "word": "liver",
+          "startMs": 10520,
+          "endMs": 10640
+        },
+        {
+          "word": "disease",
+          "startMs": 10640,
+          "endMs": 10960
+        },
+        {
+          "word": "scores",
+          "startMs": 10960,
+          "endMs": 11380
+        },
+        {
+          "word": "got",
+          "startMs": 11380,
+          "endMs": 11880
+        },
+        {
+          "word": "significantly",
+          "startMs": 11880,
+          "endMs": 12520
+        },
+        {
+          "word": "worse.",
+          "startMs": 12520,
+          "endMs": 12860
+        },
+        {
+          "word": "And",
+          "startMs": 13700,
+          "endMs": 13960
+        },
+        {
+          "word": "when",
+          "startMs": 13960,
+          "endMs": 14100
+        },
+        {
+          "word": "they",
+          "startMs": 14100,
+          "endMs": 14240
+        },
+        {
+          "word": "supplemented",
+          "startMs": 14240,
+          "endMs": 14840
+        },
+        {
+          "word": "glycine",
+          "startMs": 14840,
+          "endMs": 15300
+        },
+        {
+          "word": "directly,",
+          "startMs": 15300,
+          "endMs": 15720
+        },
+        {
+          "word": "liver",
+          "startMs": 16420,
+          "endMs": 16580
+        },
+        {
+          "word": "health",
+          "startMs": 16580,
+          "endMs": 16840
+        },
+        {
+          "word": "improved.",
+          "startMs": 16840,
+          "endMs": 17220
+        },
+        {
+          "word": "This",
+          "startMs": 18080,
+          "endMs": 18420
+        },
+        {
+          "word": "isn't",
+          "startMs": 18420,
+          "endMs": 18740
+        },
+        {
+          "word": "just",
+          "startMs": 18740,
+          "endMs": 18920
+        },
+        {
+          "word": "an",
+          "startMs": 18920,
+          "endMs": 19080
+        },
+        {
+          "word": "association",
+          "startMs": 19080,
+          "endMs": 19640
+        },
+        {
+          "word": "anymore.",
+          "startMs": 19640,
+          "endMs": 20040
+        },
+        {
+          "word": "It's",
+          "startMs": 20600,
+          "endMs": 20760
+        },
+        {
+          "word": "a",
+          "startMs": 20760,
+          "endMs": 20820
+        },
+        {
+          "word": "causal",
+          "startMs": 20820,
+          "endMs": 21200
+        },
+        {
+          "word": "link.",
+          "startMs": 21200,
+          "endMs": 21500
+        }
+      ]
+    },
+    {
+      "sceneId": "scene_005",
+      "type": "talking_point",
+      "heading": "The 2-Week Human Result",
+      "narration": "Now the human experiment. Researchers measured liver health before and after just two weeks of glycine supplementation. The result: statistically significant improvement in liver markers \u2014 and this was independent of fat loss, which is usually the main driver of liver health improvement. Two weeks. That's remarkably fast for a dietary supplement.",
+      "durationMs": 25150,
+      "durationFrames": 754,
+      "mood": "positive",
+      "evidenceStrength": "moderate",
+      "evidenceColor": "#14b8a6",
+      "claimsReferenced": [
+        "glycine-human-trial"
+      ],
+      "visualNotes": "Dramatic comparison showing two liver cross-sections side by side, left liver is dull yellow-brown with visible fatty deposits and inflammation, right liver is vibrant healthy dark red with clean tissue and a subtle teal glow, a large arrow points from left to right suggesting transformation, dark background, high contrast medical illustration, no text no words no labels, cinematic",
+      "keywords": [
+        "2 Weeks",
+        "Liver Markers",
+        "Improved"
+      ],
+      "imagePath": "glycine-poc/images/scene_005.jpg",
+      "audioPath": "glycine-poc/audio/scene_005.wav",
+      "citations": [
+        {
+          "label": "Human glycine trial",
+          "detail": "Pre/post design, 2-week supplementation"
+        }
+      ],
+      "wordTimings": [
+        {
+          "word": "Now",
+          "startMs": 0,
+          "endMs": 240
+        },
+        {
+          "word": "the",
+          "startMs": 540,
+          "endMs": 640
+        },
+        {
+          "word": "human",
+          "startMs": 640,
+          "endMs": 980
+        },
+        {
+          "word": "experiment.",
+          "startMs": 980,
+          "endMs": 1680
+        },
+        {
+          "word": "Researchers",
+          "startMs": 2300,
+          "endMs": 2700
+        },
+        {
+          "word": "measured",
+          "startMs": 2700,
+          "endMs": 3240
+        },
+        {
+          "word": "liver",
+          "startMs": 3240,
+          "endMs": 3560
+        },
+        {
+          "word": "health",
+          "startMs": 3560,
+          "endMs": 4019
+        },
+        {
+          "word": "before",
+          "startMs": 4019,
+          "endMs": 4680
+        },
+        {
+          "word": "and",
+          "startMs": 4680,
+          "endMs": 5020
+        },
+        {
+          "word": "after",
+          "startMs": 5020,
+          "endMs": 5380
+        },
+        {
+          "word": "just",
+          "startMs": 5380,
+          "endMs": 5640
+        },
+        {
+          "word": "two",
+          "startMs": 5640,
+          "endMs": 6020
+        },
+        {
+          "word": "weeks",
+          "startMs": 6020,
+          "endMs": 6260
+        },
+        {
+          "word": "of",
+          "startMs": 6260,
+          "endMs": 6500
+        },
+        {
+          "word": "glycine",
+          "startMs": 6500,
+          "endMs": 7020
+        },
+        {
+          "word": "supplementation.",
+          "startMs": 7020,
+          "endMs": 7840
+        },
+        {
+          "word": "The",
+          "startMs": 8360,
+          "endMs": 8540
+        },
+        {
+          "word": "result:",
+          "startMs": 8540,
+          "endMs": 8920
+        },
+        {
+          "word": "statistically",
+          "startMs": 9620,
+          "endMs": 10360
+        },
+        {
+          "word": "significant",
+          "startMs": 10360,
+          "endMs": 11000
+        },
+        {
+          "word": "improvement",
+          "startMs": 11000,
+          "endMs": 11500
+        },
+        {
+          "word": "in",
+          "startMs": 11500,
+          "endMs": 11760
+        },
+        {
+          "word": "liver",
+          "startMs": 11760,
+          "endMs": 11980
+        },
+        {
+          "word": "markers",
+          "startMs": 11980,
+          "endMs": 12380
+        },
+        {
+          "word": "and",
+          "startMs": 13080,
+          "endMs": 13360
+        },
+        {
+          "word": "this",
+          "startMs": 13360,
+          "endMs": 13540
+        },
+        {
+          "word": "was",
+          "startMs": 13540,
+          "endMs": 13720
+        },
+        {
+          "word": "independent",
+          "startMs": 13720,
+          "endMs": 14340
+        },
+        {
+          "word": "of",
+          "startMs": 14340,
+          "endMs": 14620
+        },
+        {
+          "word": "fat",
+          "startMs": 14620,
+          "endMs": 14840
+        },
+        {
+          "word": "loss,",
+          "startMs": 14840,
+          "endMs": 15080
+        },
+        {
+          "word": "which",
+          "startMs": 15460,
+          "endMs": 15820
+        },
+        {
+          "word": "is",
+          "startMs": 15820,
+          "endMs": 15940
+        },
+        {
+          "word": "usually",
+          "startMs": 15940,
+          "endMs": 16420
+        },
+        {
+          "word": "the",
+          "startMs": 16420,
+          "endMs": 16600
+        },
+        {
+          "word": "main",
+          "startMs": 16600,
+          "endMs": 16880
+        },
+        {
+          "word": "driver",
+          "startMs": 16880,
+          "endMs": 17200
+        },
+        {
+          "word": "of",
+          "startMs": 17200,
+          "endMs": 17500
+        },
+        {
+          "word": "liver",
+          "startMs": 17500,
+          "endMs": 17640
+        },
+        {
+          "word": "health",
+          "startMs": 17640,
+          "endMs": 17960
+        },
+        {
+          "word": "improvement.",
+          "startMs": 17960,
+          "endMs": 18420
+        },
+        {
+          "word": "Two",
+          "startMs": 19180,
+          "endMs": 19660
+        },
+        {
+          "word": "weeks.",
+          "startMs": 19660,
+          "endMs": 20120
+        },
+        {
+          "word": "That's",
+          "startMs": 20720,
+          "endMs": 21120
+        },
+        {
+          "word": "remarkably",
+          "startMs": 21120,
+          "endMs": 21660
+        },
+        {
+          "word": "fast",
+          "startMs": 21660,
+          "endMs": 22300
+        },
+        {
+          "word": "for",
+          "startMs": 22300,
+          "endMs": 22620
+        },
+        {
+          "word": "a",
+          "startMs": 22620,
+          "endMs": 22720
+        },
+        {
+          "word": "dietary",
+          "startMs": 22720,
+          "endMs": 23040
+        },
+        {
+          "word": "supplement.",
+          "startMs": 23040,
+          "endMs": 23640
+        }
+      ]
+    },
+    {
+      "sceneId": "scene_007",
+      "type": "talking_point",
+      "heading": "What You Can Actually Do",
+      "narration": "Here's the practical takeaway. If you have elevated liver markers like AST and ALT, glycine supplementation is remarkably easy to try. The study used about 100 milligrams per kilogram of body weight. It has a slightly sweet taste \u2014 no choking down bitter pills. You could measure your liver markers, supplement for two weeks, and measure again. It's a simple, low-risk self-experiment backed by real, if early, science.",
+      "durationMs": 28600,
+      "durationFrames": 858,
+      "mood": "actionable",
+      "evidenceStrength": "moderate",
+      "evidenceColor": "#14b8a6",
+      "claimsReferenced": [
+        "glycine-practical"
+      ],
+      "visualNotes": "Close-up of a white supplement powder being scooped from a jar with a small measuring spoon, the powder is fine and bright white like sugar, a clear glass of water sits nearby ready to be mixed, warm kitchen counter with soft golden morning light, shallow depth of field, approachable and practical, no text, no labels, cinematic",
+      "keywords": [
+        "100mg/kg",
+        "Sweet Taste",
+        "Self-Experiment"
+      ],
+      "imagePath": "glycine-poc/images/scene_007.jpg",
+      "audioPath": "glycine-poc/audio/scene_007.wav",
+      "wordTimings": [
+        {
+          "word": "Here's",
+          "startMs": 0,
+          "endMs": 300
+        },
+        {
+          "word": "the",
+          "startMs": 300,
+          "endMs": 400
+        },
+        {
+          "word": "practical",
+          "startMs": 400,
+          "endMs": 900
+        },
+        {
+          "word": "takeaway.",
+          "startMs": 900,
+          "endMs": 1440
+        },
+        {
+          "word": "If",
+          "startMs": 2160,
+          "endMs": 2380
+        },
+        {
+          "word": "you",
+          "startMs": 2380,
+          "endMs": 2460
+        },
+        {
+          "word": "have",
+          "startMs": 2460,
+          "endMs": 2640
+        },
+        {
+          "word": "elevated",
+          "startMs": 2640,
+          "endMs": 3060
+        },
+        {
+          "word": "liver",
+          "startMs": 3060,
+          "endMs": 3320
+        },
+        {
+          "word": "markers",
+          "startMs": 3320,
+          "endMs": 3700
+        },
+        {
+          "word": "like",
+          "startMs": 3700,
+          "endMs": 4040
+        },
+        {
+          "word": "AST",
+          "startMs": 4040,
+          "endMs": 4560
+        },
+        {
+          "word": "and",
+          "startMs": 4560,
+          "endMs": 4860
+        },
+        {
+          "word": "ALT,",
+          "startMs": 4860,
+          "endMs": 5340
+        },
+        {
+          "word": "glycine",
+          "startMs": 5880,
+          "endMs": 6260
+        },
+        {
+          "word": "supplementation",
+          "startMs": 6260,
+          "endMs": 7020
+        },
+        {
+          "word": "is",
+          "startMs": 7020,
+          "endMs": 7260
+        },
+        {
+          "word": "remarkably",
+          "startMs": 7260,
+          "endMs": 7820
+        },
+        {
+          "word": "easy",
+          "startMs": 7820,
+          "endMs": 8300
+        },
+        {
+          "word": "to",
+          "startMs": 8300,
+          "endMs": 8440
+        },
+        {
+          "word": "try.",
+          "startMs": 8440,
+          "endMs": 8700
+        },
+        {
+          "word": "The",
+          "startMs": 9480,
+          "endMs": 9580
+        },
+        {
+          "word": "study",
+          "startMs": 9580,
+          "endMs": 9880
+        },
+        {
+          "word": "used",
+          "startMs": 9880,
+          "endMs": 10200
+        },
+        {
+          "word": "about",
+          "startMs": 10200,
+          "endMs": 10400
+        },
+        {
+          "word": "100",
+          "startMs": 10400,
+          "endMs": 10920
+        },
+        {
+          "word": "milligrams",
+          "startMs": 10920,
+          "endMs": 11400
+        },
+        {
+          "word": "per",
+          "startMs": 11400,
+          "endMs": 11800
+        },
+        {
+          "word": "kilogram",
+          "startMs": 11800,
+          "endMs": 12080
+        },
+        {
+          "word": "of",
+          "startMs": 12080,
+          "endMs": 12440
+        },
+        {
+          "word": "body",
+          "startMs": 12440,
+          "endMs": 12660
+        },
+        {
+          "word": "weight.",
+          "startMs": 12660,
+          "endMs": 12940
+        },
+        {
+          "word": "It",
+          "startMs": 13440,
+          "endMs": 13700
+        },
+        {
+          "word": "has",
+          "startMs": 13700,
+          "endMs": 13820
+        },
+        {
+          "word": "a",
+          "startMs": 13820,
+          "endMs": 13940
+        },
+        {
+          "word": "slightly",
+          "startMs": 13940,
+          "endMs": 14320
+        },
+        {
+          "word": "sweet",
+          "startMs": 14320,
+          "endMs": 14660
+        },
+        {
+          "word": "taste",
+          "startMs": 14660,
+          "endMs": 15160
+        },
+        {
+          "word": "no",
+          "startMs": 15700,
+          "endMs": 15860
+        },
+        {
+          "word": "choking",
+          "startMs": 15860,
+          "endMs": 16260
+        },
+        {
+          "word": "down",
+          "startMs": 16260,
+          "endMs": 16540
+        },
+        {
+          "word": "bitter",
+          "startMs": 16540,
+          "endMs": 16840
+        },
+        {
+          "word": "pills.",
+          "startMs": 16840,
+          "endMs": 17160
+        },
+        {
+          "word": "You",
+          "startMs": 17980,
+          "endMs": 18240
+        },
+        {
+          "word": "could",
+          "startMs": 18240,
+          "endMs": 18380
+        },
+        {
+          "word": "measure",
+          "startMs": 18380,
+          "endMs": 18680
+        },
+        {
+          "word": "your",
+          "startMs": 18680,
+          "endMs": 18880
+        },
+        {
+          "word": "liver",
+          "startMs": 18880,
+          "endMs": 19060
+        },
+        {
+          "word": "markers,",
+          "startMs": 19060,
+          "endMs": 19500
+        },
+        {
+          "word": "supplement",
+          "startMs": 20060,
+          "endMs": 20400
+        },
+        {
+          "word": "for",
+          "startMs": 20400,
+          "endMs": 20620
+        },
+        {
+          "word": "two",
+          "startMs": 20620,
+          "endMs": 20860
+        },
+        {
+          "word": "weeks,",
+          "startMs": 20860,
+          "endMs": 21140
+        },
+        {
+          "word": "and",
+          "startMs": 21380,
+          "endMs": 21720
+        },
+        {
+          "word": "measure",
+          "startMs": 21720,
+          "endMs": 22000
+        },
+        {
+          "word": "again.",
+          "startMs": 22000,
+          "endMs": 22360
+        },
+        {
+          "word": "It's",
+          "startMs": 23020,
+          "endMs": 23260
+        },
+        {
+          "word": "a",
+          "startMs": 23260,
+          "endMs": 23320
+        },
+        {
+          "word": "simple,",
+          "startMs": 23320,
+          "endMs": 23740
+        },
+        {
+          "word": "low-risk",
+          "startMs": 23960,
+          "endMs": 24460
+        },
+        {
+          "word": "self-experiment",
+          "startMs": 24460,
+          "endMs": 25340
+        },
+        {
+          "word": "backed",
+          "startMs": 25340,
+          "endMs": 25740
+        },
+        {
+          "word": "by",
+          "startMs": 25740,
+          "endMs": 25920
+        },
+        {
+          "word": "real,",
+          "startMs": 25920,
+          "endMs": 26320
+        },
+        {
+          "word": "if",
+          "startMs": 26520,
+          "endMs": 26700
+        },
+        {
+          "word": "early,",
+          "startMs": 26700,
+          "endMs": 27020
+        },
+        {
+          "word": "science.",
+          "startMs": 27020,
+          "endMs": 27520
+        }
+      ]
+    },
+    {
+      "sceneId": "scene_006",
+      "type": "talking_point",
+      "heading": "Want to Dig Deeper?",
+      "narration": "Quick note on the science: this was a small study without a control group, and larger trials are still needed. We've linked the full study and a deeper analysis below. If you want to dig into the details, that's where to start.",
+      "durationMs": 15250,
+      "durationFrames": 457,
+      "mood": "curious",
+      "evidenceStrength": "none",
+      "evidenceColor": "#94a3b8",
+      "claimsReferenced": [
+        "glycine-limitations"
+      ],
+      "visualNotes": "Close-up of a laptop screen showing a scientific research abstract with charts and data tables, the screen glows softly in a dark room, a cup of coffee sits nearby, cozy evening study atmosphere, shallow depth of field focused on the screen, no readable text, cinematic",
+      "keywords": [
+        "Full Study Linked",
+        "Dig Deeper"
+      ],
+      "imagePath": "glycine-poc/images/scene_006.jpg",
+      "audioPath": "glycine-poc/audio/scene_006.wav",
+      "wordTimings": [
+        {
+          "word": "Quick",
+          "startMs": 0,
+          "endMs": 180
+        },
+        {
+          "word": "note",
+          "startMs": 180,
+          "endMs": 520
+        },
+        {
+          "word": "on",
+          "startMs": 520,
+          "endMs": 820
+        },
+        {
+          "word": "the",
+          "startMs": 820,
+          "endMs": 960
+        },
+        {
+          "word": "science:",
+          "startMs": 960,
+          "endMs": 1300
+        },
+        {
+          "word": "this",
+          "startMs": 1900,
+          "endMs": 2000
+        },
+        {
+          "word": "was",
+          "startMs": 2000,
+          "endMs": 2140
+        },
+        {
+          "word": "a",
+          "startMs": 2140,
+          "endMs": 2280
+        },
+        {
+          "word": "small",
+          "startMs": 2280,
+          "endMs": 2520
+        },
+        {
+          "word": "study",
+          "startMs": 2520,
+          "endMs": 2920
+        },
+        {
+          "word": "without",
+          "startMs": 2920,
+          "endMs": 3340
+        },
+        {
+          "word": "a",
+          "startMs": 3340,
+          "endMs": 3500
+        },
+        {
+          "word": "control",
+          "startMs": 3500,
+          "endMs": 3780
+        },
+        {
+          "word": "group,",
+          "startMs": 3780,
+          "endMs": 4220
+        },
+        {
+          "word": "and",
+          "startMs": 4640,
+          "endMs": 4840
+        },
+        {
+          "word": "larger",
+          "startMs": 4840,
+          "endMs": 5160
+        },
+        {
+          "word": "trials",
+          "startMs": 5160,
+          "endMs": 5560
+        },
+        {
+          "word": "are",
+          "startMs": 5560,
+          "endMs": 5820
+        },
+        {
+          "word": "still",
+          "startMs": 5820,
+          "endMs": 6080
+        },
+        {
+          "word": "needed.",
+          "startMs": 6080,
+          "endMs": 6420
+        },
+        {
+          "word": "We've",
+          "startMs": 7160,
+          "endMs": 7480
+        },
+        {
+          "word": "linked",
+          "startMs": 7480,
+          "endMs": 7660
+        },
+        {
+          "word": "the",
+          "startMs": 7660,
+          "endMs": 7860
+        },
+        {
+          "word": "full",
+          "startMs": 7860,
+          "endMs": 8080
+        },
+        {
+          "word": "study",
+          "startMs": 8080,
+          "endMs": 8460
+        },
+        {
+          "word": "and",
+          "startMs": 8820,
+          "endMs": 8920
+        },
+        {
+          "word": "a",
+          "startMs": 9200,
+          "endMs": 9680
+        },
+        {
+          "word": "deeper",
+          "startMs": 9680,
+          "endMs": 10100
+        },
+        {
+          "word": "analysis",
+          "startMs": 10860,
+          "endMs": 11080
+        },
+        {
+          "word": "below.",
+          "startMs": 11080,
+          "endMs": 11160
+        },
+        {
+          "word": "If",
+          "startMs": 11160,
+          "endMs": 11340
+        },
+        {
+          "word": "you",
+          "startMs": 11340,
+          "endMs": 11540
+        },
+        {
+          "word": "want",
+          "startMs": 11540,
+          "endMs": 11700
+        },
+        {
+          "word": "to",
+          "startMs": 11700,
+          "endMs": 11860
+        },
+        {
+          "word": "dig",
+          "startMs": 11860,
+          "endMs": 12200
+        },
+        {
+          "word": "into",
+          "startMs": 13280,
+          "endMs": 13380
+        },
+        {
+          "word": "the",
+          "startMs": 13380,
+          "endMs": 13660
+        },
+        {
+          "word": "details,",
+          "startMs": 13660,
+          "endMs": 13960
+        },
+        {
+          "word": "that's",
+          "startMs": 13960,
+          "endMs": 14260
+        },
+        {
+          "word": "where",
+          "startMs": 14260,
+          "endMs": 14560
+        },
+        {
+          "word": "to",
+          "startMs": 14560,
+          "endMs": 14860
+        },
+        {
+          "word": "start.",
+          "startMs": 14860,
+          "endMs": 15160
+        }
+      ]
+    },
+    {
+      "sceneId": "scene_008",
+      "type": "source_list",
+      "heading": "Sources",
+      "narration": "",
+      "durationMs": 3000,
+      "durationFrames": 90,
+      "mood": "closing",
+      "evidenceStrength": "none",
+      "evidenceColor": "#94a3b8",
+      "claimsReferenced": [],
+      "visualNotes": "Source list closing card",
+      "audioPath": "glycine-poc/audio/scene_008.wav"
+    }
+  ],
+  "sourcesList": [
+    {
+      "label": "Gaggini et al. (2024)",
+      "full_citation": "Gaggini M, et al. Glycine supplementation and liver health recovery in fatty liver disease. 2024.",
+      "doi": "10.1038/example-doi"
+    }
+  ],
+  "disclaimer": "This content is for educational purposes only and does not constitute medical advice. Always consult a healthcare professional before starting any supplement."
+}
