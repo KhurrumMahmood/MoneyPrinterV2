@@ -11,6 +11,8 @@ import {
 import type { SceneSpec, Brand } from "../../types";
 import { GrainOverlay } from "../shared/GrainOverlay";
 import { KineticCaptions } from "../shared/KineticCaptions";
+import { EvidenceBadge } from "../shared/EvidenceBadge";
+import { FallbackEvidencePanel } from "../shared/FallbackEvidencePanel";
 import { useLayout } from "../../hooks/useLayout";
 
 interface Props {
@@ -59,6 +61,8 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
 
       {/* ── Grain ── */}
       <GrainOverlay />
+
+      <EvidenceBadge scene={scene} brand={brand} />
 
       {/* ── Content ── */}
       <AbsoluteFill
@@ -246,6 +250,8 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
           />
         </div>
       )}
+
+      <FallbackEvidencePanel scene={scene} brand={brand} />
     </AbsoluteFill>
   );
 };

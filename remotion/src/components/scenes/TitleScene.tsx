@@ -13,6 +13,9 @@ import type { SceneSpec, Brand, BrandColors } from "../../types";
 import { GrainOverlay } from "../shared/GrainOverlay";
 import { GradientMeshBackground } from "../shared/GradientMeshBackground";
 import { KineticCaptions } from "../shared/KineticCaptions";
+import { KeywordOverlay } from "../shared/KeywordOverlay";
+import { EvidenceBadge } from "../shared/EvidenceBadge";
+import { FallbackEvidencePanel } from "../shared/FallbackEvidencePanel";
 import { useLayout } from "../../hooks/useLayout";
 
 interface Props {
@@ -180,6 +183,8 @@ export const TitleScene: React.FC<Props> = ({ scene, brand }) => {
       {/* ── Layer 3: Grain overlay ── */}
       <GrainOverlay />
 
+      <EvidenceBadge scene={scene} brand={brand} />
+
       {/* ── Layer 4: Content ── */}
       <AbsoluteFill
         style={{
@@ -269,6 +274,12 @@ export const TitleScene: React.FC<Props> = ({ scene, brand }) => {
           />
         </div>
       )}
+
+      {scene.keywords && scene.keywords.length > 0 && (
+        <KeywordOverlay keywords={scene.keywords} colors={colors} fonts={fonts} startFrame={20} />
+      )}
+
+      <FallbackEvidencePanel scene={scene} brand={brand} />
     </AbsoluteFill>
   );
 };

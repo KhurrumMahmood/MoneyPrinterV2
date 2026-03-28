@@ -78,6 +78,47 @@ All config lives in `config.json` at the project root. See `config.example.json`
 - **Nano Banana 2** — for image generation (Gemini image API)
 - **Go** — only needed for Outreach (Google Maps scraper)
 
+## CiteVideo Pipeline
+
+The `citevideo/` directory contains the in-progress evidence-first health media system.
+
+### Core Principle
+
+Treat the pipeline as an evidence-synthesis product first and a video generator second.
+The canonical output is the `TopicEvidencePackage` written to `workspace/{run_id}/package/`.
+Video specs, dossiers, topic hubs, and chat indices should derive from the package artifacts
+rather than inventing their own source-of-truth layers.
+
+### Current Package Artifacts
+
+Each run now aims to produce:
+- `topic_brief.json`
+- `source_registry.json`
+- `claims.json`
+- `evidence_graph.json`
+- `decision_table.json`
+- `delivery_manifest.json`
+- `web_dossier.json`
+- `topic_hub_fragment.json`
+- `chat_index.json`
+- `corrections.json`
+
+### Cost Policy
+
+- Prefer CLI-agent workflows for research, synthesis, review, and QA.
+- Do not enable paid OpenRouter research by default.
+- Paid API usage should be limited to media generation workflows:
+  - TTS
+  - transcription/alignment
+  - image generation
+- Keep media operations aggressively cached by content hash.
+
+### Notes for Future Work
+
+- **Per-run retrospectives** live at `workspace/{run_id}/retrospective.md` and should be consulted before modifying research or delivery logic.
+- The first implementation milestone is export-first:
+  package → Remotion spec + dossier JSON + topic hub JSON + grounded chat index.
+
 ## Contributing
 
 PRs go against `main`. One feature/fix per PR. Open an issue first. Use `WIP` label for in-progress PRs.

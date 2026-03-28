@@ -70,6 +70,10 @@ python src/main.py
 
 All relevant document can be found [here](docs/).
 
+Experimental CiteVideo documentation:
+
+- [docs/CiteVideo.md](docs/CiteVideo.md) — evidence-first health media pipeline, package outputs, and low-cost backend model
+
 ## Scripts
 
 For easier usage, there are some scripts in the `scripts` directory, that can be used to directly access the core functionality of MPV2, without the need of user interaction.

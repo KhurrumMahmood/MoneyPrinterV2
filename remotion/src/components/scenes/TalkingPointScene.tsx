@@ -12,6 +12,9 @@ import {
 import type { SceneSpec, Brand, BrandColors } from "../../types";
 import { GrainOverlay } from "../shared/GrainOverlay";
 import { KineticCaptions } from "../shared/KineticCaptions";
+import { KeywordOverlay } from "../shared/KeywordOverlay";
+import { EvidenceBadge } from "../shared/EvidenceBadge";
+import { FallbackEvidencePanel } from "../shared/FallbackEvidencePanel";
 import { useLayout } from "../../hooks/useLayout";
 
 interface Props {
@@ -353,6 +356,8 @@ export const TalkingPointScene: React.FC<Props> = ({ scene, brand }) => {
       {/* ── Grain ── */}
       <GrainOverlay />
 
+      <EvidenceBadge scene={scene} brand={brand} />
+
       {/* ── Content ── */}
       <AbsoluteFill style={{ padding: layout.contentPadding }}>
         {/* ── Heading with accent border ── */}
@@ -516,6 +521,12 @@ export const TalkingPointScene: React.FC<Props> = ({ scene, brand }) => {
           />
         </div>
       )}
+
+      {scene.keywords && scene.keywords.length > 0 && (
+        <KeywordOverlay keywords={scene.keywords} colors={colors} fonts={fonts} startFrame={28} />
+      )}
+
+      <FallbackEvidencePanel scene={scene} brand={brand} />
     </AbsoluteFill>
   );
 };

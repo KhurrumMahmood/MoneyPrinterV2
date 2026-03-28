@@ -1,0 +1,27 @@
+{
+  "name": "mpv2-remotion",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Remotion video renderer for MoneyPrinterV2",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "tsx render.ts"
+  },
+  "dependencies": {
+    "@remotion/bundler": "^4.0",
+    "@remotion/cli": "^4.0",
+    "@remotion/media-utils": "^4.0",
+    "@remotion/renderer": "^4.0",
+    "@remotion/tailwind": "^4.0",
+    "@remotion/transitions": "^4.0",
+    "react": "^19",
+    "react-dom": "^19",
+    "remotion": "^4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tsx": "^4",
+    "typescript": "^5"
+  }
+}
