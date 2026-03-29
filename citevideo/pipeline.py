@@ -6,12 +6,14 @@ to workspace/{run_id}/ for iteration and reuse.
 
 Usage:
     python -m citevideo.pipeline <transcript_path> [--from-phase N] [--run-id ID]
+    python -m citevideo.pipeline --bundle <bundle_path> [--from-phase N] [--run-id ID]
 """
 
 import os
 import sys
 import json
 import argparse
+import shutil
 from uuid import uuid4
 from datetime import datetime
 
@@ -47,6 +49,28 @@ def _latest_script_path(run_dir: str) -> str | None:
         if os.path.exists(path):
             return path
     return None
+
+
+def _prepare_run_from_bundle(run_dir: str, bundle_path: str) -> dict:
+    from citevideo.intake import load_topic_bundle
+
+    loaded = load_topic_bundle(bundle_path)
+    bundle = loaded["bundle"]
+    transcript = loaded["transcript"]
+
+    transcript_path = os.path.join(run_dir, "transcript.txt")
+    with open(transcript_path, "w", encoding="utf-8") as handle:
+        handle.write(transcript)
+
+    bundle_output_path = os.path.join(run_dir, "source_bundle.json")
+    _save_json(bundle_output_path, bundle)
+
+    return {
+        "transcript": transcript,
+        "title": bundle.get("title", ""),
+        "url": bundle.get("video_url", ""),
+        "topic": bundle.get("topic", ""),
+    }
 
 
 def run_package_exports(run_dir: str):
@@ -113,11 +137,18 @@ def run_phase_1(run_dir: str, transcript: str, video_title: str = "", video_url:
     transcript_path = os.path.join(run_dir, "transcript.txt")
     with open(transcript_path, "w", encoding="utf-8") as f:
         f.write(transcript)
+    source_bundle = _load_optional_json(os.path.join(run_dir, "source_bundle.json"), {})
 
     # 1a: Extract claims
     print("\n=== Phase 1a: Extracting claims ===")
     claims_path = os.path.join(run_dir, "claims.json")
     claims_data = extract_claims(transcript, video_title=video_title)
+    if source_bundle.get("external_research_notes"):
+        claims_data["external_research_notes"] = source_bundle["external_research_notes"]
+    if source_bundle.get("sources"):
+        claims_data["bundle_sources"] = source_bundle["sources"]
+    if source_bundle.get("topic"):
+        claims_data["topic"] = source_bundle["topic"]
     claims_data["video_url"] = video_url
     claims_data["extracted_at"] = datetime.now().isoformat()
     _save_json(claims_path, claims_data)
@@ -223,25 +254,74 @@ def run_phase_5(run_dir: str):
     spec_path = os.path.join(prod_dir, "spec.json")
     output_dir = os.path.join(run_dir, "output")
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, "video.mp4")
+    spec_data = _load_optional_json(spec_path, {})
+    fps = spec_data.get("meta", {}).get("fps", 30)
+    total_duration_seconds = max(
+        0,
+        int(spec_data.get("meta", {}).get("totalDurationMs", 0) / 1000),
+    )
+    preview_seconds = int(os.environ.get("CITEVIDEO_RENDER_PREVIEW_SECONDS", "0") or 0)
+    output_name = "video.mp4"
+    frame_range_arg = None
+    effective_duration_seconds = total_duration_seconds
+
+    if preview_seconds > 0:
+        preview_frames = max(1, preview_seconds * fps)
+        total_frames = spec_data.get("meta", {}).get("totalDurationFrames", preview_frames)
+        end_frame = max(0, min(total_frames - 1, preview_frames - 1))
+        frame_range_arg = f"--frame-range=0-{end_frame}"
+        output_name = f"preview-{preview_seconds}s.mp4"
+        effective_duration_seconds = min(total_duration_seconds or preview_seconds, preview_seconds)
+
+    output_path = os.path.join(output_dir, output_name)
 
     remotion_root = os.path.join(os.path.dirname(os.path.dirname(run_dir)), "remotion")
     render_script = os.path.join(remotion_root, "render.ts")
+    tsx_binary = os.path.join(remotion_root, "node_modules", ".bin", "tsx")
 
     if not os.path.exists(render_script):
         print("  WARNING: Remotion render script not found, skipping render")
         return None
 
+    node_binary = os.environ.get("CITEVIDEO_NODE_BINARY") or shutil.which("node")
+    if not node_binary:
+        fallback_node = "/Users/khurrummahmood/.nvm/versions/node/v22.21.1/bin/node"
+        if os.path.exists(fallback_node):
+            node_binary = fallback_node
+
+    if os.path.exists(tsx_binary) and node_binary:
+        command = [node_binary, tsx_binary, render_script, spec_path, output_path]
+    else:
+        command = ["npx", "tsx", render_script, spec_path, output_path]
+    if frame_range_arg:
+        command.append(frame_range_arg)
+
     print(f"\n=== Phase 5: Remotion render ===")
     print(f"  Spec: {spec_path}")
     print(f"  Output: {output_path}")
+    if preview_seconds > 0:
+        print(f"  Preview mode: first {preview_seconds}s")
+    print(f"  Render command: {' '.join(command[:4])} ...")
+
+    env = os.environ.copy()
+    if node_binary:
+        node_dir = os.path.dirname(node_binary)
+        env["PATH"] = f"{node_dir}:{env.get('PATH', '')}"
+
+    configured_timeout = os.environ.get("CITEVIDEO_RENDER_TIMEOUT_SECONDS")
+    if configured_timeout:
+        render_timeout_seconds = int(configured_timeout)
+    else:
+        render_timeout_seconds = max(600, effective_duration_seconds * 3)
+    print(f"  Render timeout: {render_timeout_seconds}s")
 
     result = sp.run(
-        ["npx", "tsx", render_script, spec_path, output_path],
+        command,
         cwd=remotion_root,
         capture_output=True,
         text=True,
-        timeout=600,
+        timeout=render_timeout_seconds,
+        env=env,
     )
 
     if result.returncode != 0:
@@ -254,20 +334,31 @@ def run_phase_5(run_dir: str):
 
 def main():
     parser = argparse.ArgumentParser(description="CiteVideo Pipeline")
-    parser.add_argument("transcript", help="Path to transcript file")
+    parser.add_argument("transcript", nargs="?", help="Path to transcript file")
+    parser.add_argument("--bundle", default=None, help="Path to a topic bundle JSON file")
     parser.add_argument("--title", default="", help="Video title")
     parser.add_argument("--url", default="", help="Video URL")
     parser.add_argument("--run-id", default=None, help="Resume a specific run")
     parser.add_argument("--from-phase", type=int, default=1, help="Start from phase N")
     args = parser.parse_args()
 
-    # Read transcript
-    with open(args.transcript, "r", encoding="utf-8") as f:
-        transcript = f.read()
+    if not args.transcript and not args.bundle:
+        parser.error("Provide either a transcript path or --bundle <bundle_path>.")
 
     # Setup run directory
     run_id = args.run_id or f"run-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
     run_dir = ensure_run_dirs(run_id)
+
+    if args.bundle:
+        prepared = _prepare_run_from_bundle(run_dir, args.bundle)
+        transcript = prepared["transcript"]
+        if not args.title:
+            args.title = prepared["title"]
+        if not args.url:
+            args.url = prepared["url"]
+    else:
+        with open(args.transcript, "r", encoding="utf-8") as f:
+            transcript = f.read()
 
     print(f"CiteVideo Pipeline")
     print(f"  Run ID: {run_id}")

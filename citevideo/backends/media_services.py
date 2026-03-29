@@ -8,6 +8,7 @@ import base64
 import json
 import os
 import subprocess
+import tempfile
 import wave
 
 import requests
@@ -79,6 +80,40 @@ class OpenRouterAudioBackend(AudioBackend):
             wf.setsampwidth(2)
             wf.setframerate(24000)
             wf.writeframes(pcm_bytes)
+        return output_path
+
+
+class MacOSSayAudioBackend(AudioBackend):
+    def synthesize(self, text: str, output_path: str) -> str:
+        if not text.strip():
+            raise RuntimeError("No narration text provided for local audio synthesis")
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            aiff_path = os.path.join(tmp_dir, "narration.aiff")
+            subprocess.run(
+                ["/usr/bin/say", "-o", aiff_path, text],
+                capture_output=True,
+                text=True,
+                timeout=300,
+                check=True,
+            )
+            subprocess.run(
+                [
+                    "/opt/homebrew/bin/ffmpeg",
+                    "-y",
+                    "-i",
+                    aiff_path,
+                    "-ac",
+                    "1",
+                    "-ar",
+                    "24000",
+                    output_path,
+                ],
+                capture_output=True,
+                text=True,
+                timeout=300,
+                check=True,
+            )
         return output_path
 
 
@@ -168,3 +203,8 @@ class OpenRouterImageBackend(ImageBackend):
                 return actual_output
 
         raise RuntimeError("Image response did not include an image payload")
+
+
+class DisabledImageBackend(ImageBackend):
+    def generate(self, prompt: str, output_path: str) -> str:
+        raise RuntimeError("Image generation disabled by backend configuration")

@@ -282,7 +282,12 @@ def _build_topic_hub_fragment(run_id: str, topic_brief: dict[str, Any], evidence
     return entry.to_dict()
 
 
-def _build_chat_index(run_id: str, evidence_graph: dict[str, Any], dossier: dict[str, Any]) -> dict[str, Any]:
+def _build_chat_index(
+    run_id: str,
+    evidence_graph: dict[str, Any],
+    dossier: dict[str, Any],
+    topic_hub: dict[str, Any],
+) -> dict[str, Any]:
     records = []
     for claim in evidence_graph.get("claims", []):
         records.append(
@@ -303,17 +308,74 @@ def _build_chat_index(run_id: str, evidence_graph: dict[str, Any], dossier: dict
                 drill_down_anchor=f"claim-{claim.get('id', '')}",
             ).to_dict()
         )
+    topic_source_ids = [
+        source.get("source_id", "")
+        for source in dossier.get("source_log", [])
+        if source.get("source_id")
+    ]
     records.append(
         ChatIndexRecord(
             record_id=f"{run_id}:dossier-summary",
             record_type="summary",
             title=dossier.get("title", ""),
             content=dossier.get("summary", ""),
-            source_ids=[source.get("source_id", "") for source in dossier.get("source_log", [])],
+            source_ids=topic_source_ids,
             confidence="mixed",
             drill_down_anchor=dossier.get("page_id", ""),
         ).to_dict()
     )
+    if dossier.get("strongest_evidence"):
+        records.append(
+            ChatIndexRecord(
+                record_id=f"{run_id}:strongest",
+                record_type="strongest",
+                title="Strongest supported takeaways",
+                content="\n".join(
+                    ["Strongest supported takeaways:"]
+                    + [
+                        item.get("recommended_framing") or item.get("claim_text", "")
+                        for item in dossier.get("strongest_evidence", [])[:4]
+                    ]
+                ),
+                source_ids=topic_source_ids,
+                claim_ids=[
+                    item.get("claim_id", "")
+                    for item in dossier.get("strongest_evidence", [])[:4]
+                    if item.get("claim_id")
+                ],
+                confidence="moderate",
+                drill_down_anchor=dossier.get("page_id", ""),
+            ).to_dict()
+        )
+    caveat_lines = dossier.get("harms_and_caveats", [])[:4] + topic_hub.get("uncertainties", [])[:3]
+    if caveat_lines:
+        records.append(
+            ChatIndexRecord(
+                record_id=f"{run_id}:caveats",
+                record_type="caveat",
+                title="Biggest caveats and limits",
+                content="\n".join(["Biggest caveats and limits:"] + caveat_lines[:6]),
+                source_ids=topic_source_ids,
+                confidence="mixed",
+                drill_down_anchor=dossier.get("page_id", ""),
+            ).to_dict()
+        )
+    if dossier.get("what_this_does_not_mean"):
+        records.append(
+            ChatIndexRecord(
+                record_id=f"{run_id}:guardrails",
+                record_type="guardrail",
+                title="What this package does not mean",
+                content="\n".join(
+                    ["What this package does not mean:"]
+                    + dossier.get("what_this_does_not_mean", [])[:3]
+                    + ([f"Practical takeaway: {dossier.get('practical_takeaway', '')}"] if dossier.get("practical_takeaway") else [])
+                ),
+                source_ids=topic_source_ids,
+                confidence="mixed",
+                drill_down_anchor=dossier.get("page_id", ""),
+            ).to_dict()
+        )
     return {
         "run_id": run_id,
         "count": len(records),
@@ -344,14 +406,32 @@ def build_package_artifacts(run_dir: str) -> dict[str, str]:
     evidence = _load_json(os.path.join(run_dir, "evidence.json"), {"ratings": []}) or {"ratings": []}
     primary_research = _load_json(os.path.join(run_dir, "research_raw.json"), {}) or {}
     counter_research = _load_json(os.path.join(run_dir, "counter_research.json"), {}) or {}
+    source_bundle = _load_json(os.path.join(run_dir, "source_bundle.json"), {}) or {}
     delivery_manifest = _load_json(os.path.join(paths["package_dir"], PACKAGE_FILES["delivery_manifest"]), {}) or {}
     factcheck = _load_json(os.path.join(run_dir, "production", "factcheck_report.json"), {}) or {}
 
+    bundle_sources = source_bundle.get("sources", [])
+    topic_title = (
+        claims_data.get("video_title")
+        or source_bundle.get("title")
+        or evidence.get("video_title", "")
+    )
+    topic_value = source_bundle.get("topic") or topic_title or run_id.replace("-", " ")
+    topic_description = source_bundle.get("description", "")
+    topic_video_url = claims_data.get("video_url", "") or source_bundle.get("video_url", "")
+    topic_source_ids = [
+        source.get("source_id", "")
+        for source in bundle_sources
+        if source.get("source_id")
+    ]
+
     topic_brief = build_topic_brief(
         run_id=run_id,
-        title=claims_data.get("video_title") or evidence.get("video_title", ""),
-        topic=claims_data.get("video_title") or run_id.replace("-", " "),
-        video_url=claims_data.get("video_url", ""),
+        title=topic_title,
+        topic=topic_value,
+        video_url=topic_video_url,
+        description=topic_description,
+        source_ids=topic_source_ids,
     )
     source_registry = build_source_registry(
         run_id=run_id,
@@ -359,6 +439,7 @@ def build_package_artifacts(run_dir: str) -> dict[str, str]:
         transcript_path=transcript_path,
         video_title=topic_brief.get("title", ""),
         video_url=topic_brief.get("video_url", ""),
+        bundle_sources=bundle_sources,
         citations=_collect_citations(evidence),
     )
     evidence_graph = _build_evidence_graph(claims_data, evidence, primary_research, counter_research)
@@ -366,12 +447,16 @@ def build_package_artifacts(run_dir: str) -> dict[str, str]:
     corrections = _build_corrections(factcheck)
     web_dossier = _build_web_dossier(run_id, topic_brief, evidence, source_registry, corrections)
     topic_hub = _build_topic_hub_fragment(run_id, topic_brief, evidence)
-    chat_index = _build_chat_index(run_id, evidence_graph, web_dossier)
+    chat_index = _build_chat_index(run_id, evidence_graph, web_dossier, topic_hub)
+    package_claims = {
+        **claims_data,
+        "claims": evidence_graph.get("claims", []),
+    }
 
     payloads = {
         "topic_brief": topic_brief,
         "source_registry": source_registry,
-        "claims": claims_data,
+        "claims": package_claims,
         "evidence_graph": evidence_graph,
         "decision_table": decision_table,
         "delivery_manifest": delivery_manifest,

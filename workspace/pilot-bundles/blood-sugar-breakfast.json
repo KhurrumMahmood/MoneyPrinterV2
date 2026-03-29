@@ -1,0 +1,40 @@
+{
+  "title": "How To Blunt Blood Sugar Spikes Without Fear-Mongering About Breakfast",
+  "topic": "Breakfast choices, oats, and practical ways to reduce blood sugar spikes",
+  "description": "A low-risk pilot topic focused on practical blood-sugar management tactics and a fact-check of oversimplified anti-oatmeal breakfast claims.",
+  "video_url": "https://www.youtube.com/watch?v=ly14_5FC0Jw",
+  "sources": [
+    {
+      "source_id": "nutrition-made-simple:blood-sugar-spikes",
+      "title": "Blunt Blood Sugar Spikes without Cutting Carbs",
+      "source_type": "doctor_video",
+      "trust_tier": "creator_input",
+      "url": "https://www.youtube.com/watch?v=ly14_5FC0Jw",
+      "transcript_path": "../research-visual-design/channels/nutrition-made-simple/transcripts/ly14_5FC0Jw.json",
+      "start_seconds": 0,
+      "end_seconds": 450,
+      "summary": "Practical, food-based tactics to reduce post-meal glucose spikes without eliminating carbohydrates entirely.",
+      "key_points": [
+        "Adding protein to a carbohydrate-heavy meal can blunt the glucose response.",
+        "Apple cider vinegar is framed as another tactic that may reduce spikes before meals.",
+        "Food order, whole grains, cooling starches, and lentils are presented as practical levers."
+      ]
+    },
+    {
+      "source_id": "nutrition-made-simple:oats-fact-check",
+      "title": "\"Stop Eating this Breakfast!\" | Dr. Mark Hyman Fact-Checked",
+      "source_type": "fact_check_video",
+      "trust_tier": "creator_input",
+      "url": "https://www.youtube.com/watch?v=RCTi1E0cq3s",
+      "transcript_path": "../research-visual-design/channels/nutrition-made-simple/transcripts/RCTi1E0cq3s.json",
+      "start_seconds": 0,
+      "end_seconds": 780,
+      "summary": "A fact-check of a breakfast claim that portrays oatmeal as harmful, arguing that the cited comparison is really about glycemic index, fiber, and meal composition rather than oats versus eggs in isolation.",
+      "key_points": [
+        "The original viral framing says oatmeal is one of the worst breakfasts and compares it against omelets.",
+        "The fact-check argues the cited study is not a clean eggs-versus-oats comparison.",
+        "The transcript explicitly says unprocessed oats can still be a healthy breakfast and criticizes fear-mongering."
+      ]
+    }
+  ]
+}

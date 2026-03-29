@@ -77,7 +77,15 @@ Rating scales:
 - evidence_strength: 1=expert opinion only, 2=in-vitro, 3=animal model, 4=observational/cohort, 5=RCT, 6=systematic review/meta-analysis
 - extrapolation_risk: "high" mainly catches mouse-to-human jumps or in-vitro-to-clinical leaps
 
-Be rigorous. If a study is in mice, it's evidence_strength 3 even if the claim is technically accurate about what the mouse study found. If the video presents a mouse study as if it applies to humans without qualification, that's extrapolation_risk "high"."""
+Be rigorous. If a study is in mice, it's evidence_strength 3 even if the claim is technically accurate about what the mouse study found. If the video presents a mouse study as if it applies to humans without qualification, that's extrapolation_risk "high".""" 
+ 
+RATING_PROMPT += """
+
+Additional rules:
+- If the supporting materials only mention a study vaguely and do not identify it well enough to verify, set "paper_found" to false.
+- Never invent authors, journal names, years, DOIs, URLs, or PubMed IDs that are not present in the supplied materials.
+- If the evidence comes from creator summaries or notes rather than primary papers, say so in "what_study_actually_found" or "missing_context" and downgrade certainty accordingly.
+"""
 
 
 def rate_evidence(claims_data: dict, primary_research: dict, counter_research: dict) -> dict:

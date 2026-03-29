@@ -7,6 +7,8 @@ from __future__ import annotations
 from citevideo.backends.claude_cli import ClaudeCliBackend
 from citevideo.backends.codex_cli import CodexCliBackend
 from citevideo.backends.media_services import (
+    DisabledImageBackend,
+    MacOSSayAudioBackend,
     OpenRouterAudioBackend,
     OpenRouterImageBackend,
     WhisperLocalBackend,
@@ -55,6 +57,8 @@ def _resolve_audio_backend(name: str):
     normalized = (name or "openrouter-audio").strip().lower()
     if normalized == "openrouter-audio":
         return OpenRouterAudioBackend()
+    if normalized in {"macos-say", "say"}:
+        return MacOSSayAudioBackend()
     raise ValueError(f"Unknown CiteVideo audio backend: {name}")
 
 
@@ -69,6 +73,8 @@ def _resolve_image_backend(name: str):
     normalized = (name or "openrouter-image").strip().lower()
     if normalized == "openrouter-image":
         return OpenRouterImageBackend()
+    if normalized in {"disabled", "none"}:
+        return DisabledImageBackend()
     raise ValueError(f"Unknown CiteVideo image backend: {name}")
 
 

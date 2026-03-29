@@ -27,7 +27,7 @@ Main modules:
 - `citevideo/models.py`
   Canonical dataclasses for evidence, delivery, dossier, topic hub, and chat records.
 - `citevideo/pipeline.py`
-  Orchestrates phases and now rebuilds package, audit, web, and chat outputs after key steps.
+  Orchestrates phases, accepts transcript bundles, and rebuilds package, audit, web, and chat outputs after key steps.
 - `citevideo/backends/`
   Backend interfaces plus low-cost defaults for research/synthesis/review and paid-media backends for TTS, transcription, and image generation.
 - `citevideo/audits/`
@@ -62,6 +62,8 @@ Useful backend environment variables:
 - `CITEVIDEO_TRANSCRIPTION_BACKEND`
 - `CITEVIDEO_IMAGE_BACKEND`
 - `CITEVIDEO_ENABLE_OPENROUTER_RESEARCH`
+- `CITEVIDEO_RENDER_PREVIEW_SECONDS`
+- `CITEVIDEO_RENDER_TIMEOUT_SECONDS`
 
 ## Remotion
 
@@ -74,7 +76,7 @@ The Remotion app in `remotion/` now understands delivery semantics directly:
 - fallback evidence panels
 - long-form and short-form compositions
 
-The renderer still needs a dedicated smoke pass in this worktree with clean local dependency resolution.
+The renderer now supports both full exports and fast preview exports from the same spec.
 
 ## Validation
 
@@ -84,10 +86,12 @@ Validated in this branch:
 - `python3 -m compileall citevideo`
 - `python3 -c "from citevideo.pipeline import run_package_exports; run_package_exports('workspace/ben-azadi-stem-cells')"`
 - `python3 -m citevideo.web.server workspace/ben-azadi-stem-cells --port 4174`
+- `python3 -m citevideo.pipeline --bundle workspace/pilot-bundles/blood-sugar-breakfast.json --run-id pilot-blood-sugar-breakfast`
+- `CITEVIDEO_RENDER_PREVIEW_SECONDS=60 python3 -m citevideo.pipeline --bundle workspace/pilot-bundles/blood-sugar-breakfast.json --run-id pilot-blood-sugar-breakfast --from-phase 5`
 - Remotion preview render:
   `/Users/khurrummahmood/.nvm/versions/node/v22.21.1/bin/node node_modules/tsx/dist/cli.mjs render.ts spec.json ../workspace/ben-azadi-stem-cells/output/remotion-feedback.mp4`
 
-Those checks confirm package generation, audits, dossier export, topic-hub aggregation, the local reader UI, grounded chat, and a Remotion preview render are working on a real sample run.
+Those checks confirm package generation, audits, dossier export, topic-hub aggregation, the local reader UI, grounded chat, transcript-bundle intake, and both full/preview Remotion rendering are working on real sample runs.
 
 ## Local Feedback Loop
 
@@ -102,16 +106,25 @@ Reader UI:
   - audit findings
   - grounded answers with citations
 
+Pilot bundle run:
+
+- Create a bundle JSON under `workspace/pilot-bundles/` listing the topic, source videos, and transcript excerpts to combine.
+- Run `python3 -m citevideo.pipeline --bundle workspace/pilot-bundles/<bundle>.json --run-id <run_id>`
+- This writes the canonical package, script drafts, audits, dossier payloads, asset manifest, and render spec under `workspace/<run_id>/`
+
 Render preview:
 
 - Ensure `remotion/node_modules` is installed or linked locally.
-- From `remotion/`, run:
-  `/Users/khurrummahmood/.nvm/versions/node/v22.21.1/bin/node node_modules/tsx/dist/cli.mjs render.ts spec.json ../workspace/<run_id>/output/remotion-feedback.mp4`
+- For a full render, run:
+  `python3 -m citevideo.pipeline --bundle workspace/pilot-bundles/<bundle>.json --run-id <run_id> --from-phase 5`
+- For a faster feedback render, run:
+  `CITEVIDEO_RENDER_PREVIEW_SECONDS=60 python3 -m citevideo.pipeline --bundle workspace/pilot-bundles/<bundle>.json --run-id <run_id> --from-phase 5`
 - Extract preview frames or inspect the rendered MP4 before iterating on scripts, delivery manifests, or scene design.
 
 ## Known Gaps
 
 - The grounded chat helper is retrieval-only; it is useful for evidence drill-down but not yet conversationally sophisticated.
 - The reader UI is intentionally lightweight and local-first; a richer production web surface still needs to be designed.
-- Remotion preview rendering works in this worktree when local dependencies are available, but the setup should be made more reproducible.
+- The fallback-first renderer is stable and honest, but it is still visually too close to a slide deck in preview mode; richer charts, motion systems, and evidence visuals are the next major delivery upgrade.
+- Full long-form renders can take substantial time on local hardware; preview mode should be the default iteration loop.
 - The evidence package is export-first today; broader interactive web workflows come next.

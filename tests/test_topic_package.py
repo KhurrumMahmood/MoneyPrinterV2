@@ -6,6 +6,7 @@ import unittest
 from citevideo.chat import answer_grounded_question
 from citevideo.delivery.planner import build_delivery_manifest
 from citevideo.evidence.package import build_package_artifacts, ensure_package_layout
+from citevideo.intake import load_topic_bundle
 from citevideo.web.hubs import aggregate_topic_hubs
 
 
@@ -95,6 +96,12 @@ class TopicPackageTests(unittest.TestCase):
             self.assertTrue(os.path.exists(paths["topic_brief"]))
             self.assertTrue(os.path.exists(paths["web_dossier"]))
             self.assertTrue(os.path.exists(paths["chat_index"]))
+            with open(paths["claims"], "r", encoding="utf-8") as handle:
+                package_claims = json.load(handle)
+            self.assertEqual(
+                package_claims["claims"][0]["evidence_ids"],
+                ["claim_001:evidence:01"],
+            )
 
     def test_grounded_chat_refuses_high_risk_question(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -110,6 +117,52 @@ class TopicPackageTests(unittest.TestCase):
             result = answer_grounded_question(run_dir, "What dose should I take for this supplement?")
             self.assertTrue(result["refused"])
             self.assertEqual(result["reason"], "treatment planning")
+
+    def test_grounded_chat_answers_package_level_caveat_question(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run_dir = os.path.join(tmp, "sample-run")
+            os.makedirs(os.path.join(run_dir, "package", "audits"), exist_ok=True)
+            with open(os.path.join(run_dir, "package", "chat_index.json"), "w", encoding="utf-8") as handle:
+                json.dump({"records": []}, handle)
+            with open(os.path.join(run_dir, "package", "decision_table.json"), "w", encoding="utf-8") as handle:
+                json.dump({"rows": []}, handle)
+            with open(os.path.join(run_dir, "package", "topic_hub_fragment.json"), "w", encoding="utf-8") as handle:
+                json.dump({"uncertainties": ["Precise-looking percentages often come from unidentifiable studies."]}, handle)
+            with open(os.path.join(run_dir, "package", "web_dossier.json"), "w", encoding="utf-8") as handle:
+                json.dump(
+                    {
+                        "page_id": "sample-run:dossier",
+                        "title": "Sample Topic",
+                        "topic_slug": "sample-topic",
+                        "source_log": [{"source_id": "source-001"}],
+                        "harms_and_caveats": ["Several claims still need stronger attribution."],
+                        "what_this_does_not_mean": ["This package does not replace individualized medical advice."],
+                        "practical_takeaway": "Use only the strongest-supported claims first.",
+                    },
+                    handle,
+                )
+            with open(os.path.join(run_dir, "package", "audits", "coverage.json"), "w", encoding="utf-8") as handle:
+                json.dump(
+                    {
+                        "issues": [
+                            {
+                                "severity": "major",
+                                "issue": "Some claims still have no attached evidence IDs",
+                            }
+                        ]
+                    },
+                    handle,
+                )
+            with open(os.path.join(run_dir, "package", "audits", "delivery.json"), "w", encoding="utf-8") as handle:
+                json.dump({"issues": []}, handle)
+            with open(os.path.join(run_dir, "package", "audits", "trust.json"), "w", encoding="utf-8") as handle:
+                json.dump({"issues": []}, handle)
+
+            result = answer_grounded_question(run_dir, "What are the biggest caveats in this package?")
+            self.assertFalse(result["refused"])
+            self.assertIn("traceability", result["answer"])
+            self.assertIn("unidentifiable studies", result["answer"])
+            self.assertIn("source-001", result["citations"][0]["source_ids"])
 
     def test_topic_hub_aggregation_groups_runs(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -139,6 +192,44 @@ class TopicPackageTests(unittest.TestCase):
             self.assertEqual(topic["topic_slug"], "glycine-sleep")
             self.assertEqual(topic["version"], "run-b")
             self.assertEqual(topic["runs"], ["run-b", "run-a"])
+
+    def test_load_topic_bundle_combines_source_excerpts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            transcript_path = os.path.join(tmp, "source.json")
+            with open(transcript_path, "w", encoding="utf-8") as handle:
+                json.dump(
+                    [
+                        {"text": "First source segment.", "start": 0},
+                        {"text": "Second source segment.", "start": 12},
+                    ],
+                    handle,
+                )
+
+            bundle_path = os.path.join(tmp, "bundle.json")
+            with open(bundle_path, "w", encoding="utf-8") as handle:
+                json.dump(
+                    {
+                        "title": "Breakfast Pilot",
+                        "topic": "Blood sugar breakfast habits",
+                        "sources": [
+                            {
+                                "source_id": "src-001",
+                                "title": "Source One",
+                                "summary": "A useful source.",
+                                "transcript_path": "source.json",
+                                "start_seconds": 0,
+                                "end_seconds": 20,
+                            }
+                        ],
+                    },
+                    handle,
+                )
+
+            loaded = load_topic_bundle(bundle_path)
+            self.assertIn("First source segment.", loaded["transcript"])
+            self.assertIn("Second source segment.", loaded["transcript"])
+            self.assertEqual(loaded["bundle"]["title"], "Breakfast Pilot")
+            self.assertTrue(loaded["bundle"]["external_research_notes"])
 
 
 if __name__ == "__main__":
