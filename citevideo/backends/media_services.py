@@ -17,7 +17,9 @@ from citevideo.backends.media import AudioBackend, ImageBackend, TranscriptionBa
 from citevideo.config import (
     get_openrouter_api_key,
     get_openrouter_audio_model,
+    get_openrouter_audio_voice,
     get_openrouter_base_url,
+    get_openrouter_image_model,
 )
 
 
@@ -27,6 +29,12 @@ def _get_openrouter_base() -> str:
 
 class OpenRouterAudioBackend(AudioBackend):
     def synthesize(self, text: str, output_path: str) -> str:
+        prompt = (
+            "Read this text aloud exactly as written, with natural pacing and warm, "
+            "conversational expression. Speak as a knowledgeable friend explaining "
+            "science - curious and engaging, not clinical:\n\n"
+            f"{text}"
+        )
         response = requests.post(
             f"{_get_openrouter_base()}/chat/completions",
             headers={
@@ -37,14 +45,11 @@ class OpenRouterAudioBackend(AudioBackend):
                 "model": get_openrouter_audio_model() or "openai/tts-1-hd",
                 "stream": True,
                 "modalities": ["text", "audio"],
-                "audio": {"voice": "alloy", "format": "pcm16"},
+                "audio": {"voice": get_openrouter_audio_voice(), "format": "pcm16"},
                 "messages": [
                     {
                         "role": "user",
-                        "content": (
-                            "Read this text aloud exactly as written, with natural pacing and expression:\n\n"
-                            f"{text}"
-                        ),
+                        "content": prompt,
                     }
                 ],
             },
@@ -164,6 +169,7 @@ class WhisperLocalBackend(TranscriptionBackend):
 
 class OpenRouterImageBackend(ImageBackend):
     def generate(self, prompt: str, output_path: str) -> str:
+        model = get_openrouter_image_model() or "google/gemini-3.1-flash-image-preview"
         response = requests.post(
             f"{_get_openrouter_base()}/chat/completions",
             headers={
@@ -171,7 +177,7 @@ class OpenRouterImageBackend(ImageBackend):
                 "Content-Type": "application/json",
             },
             json={
-                "model": "google/gemini-3.1-flash-image-preview",
+                "model": model,
                 "messages": [{"role": "user", "content": prompt}],
                 "modalities": ["image", "text"],
             },
@@ -184,14 +190,30 @@ class OpenRouterImageBackend(ImageBackend):
         data = response.json()
 
         for choice in data.get("choices", []):
-            parts = choice.get("message", {}).get("content", [])
+            message = choice.get("message", {})
+            parts = message.get("content", [])
             if not isinstance(parts, list):
-                continue
+                parts = []
+
             for part in parts:
                 if not isinstance(part, dict) or part.get("type") != "image_url":
                     continue
                 img_data = part.get("image_url", {}).get("url", "")
-                if not img_data.startswith("data:"):
+                if img_data.startswith("data:"):
+                    b64 = img_data.split(",", 1)[1]
+                    ext = ".png"
+                    if "jpeg" in img_data or "jpg" in img_data:
+                        ext = ".jpg"
+                    actual_output = os.path.splitext(output_path)[0] + ext
+                    with open(actual_output, "wb") as handle:
+                        handle.write(base64.b64decode(b64))
+                    return actual_output
+
+            for img in message.get("images", []):
+                if not isinstance(img, dict):
+                    continue
+                img_data = img.get("image_url", {}).get("url", "")
+                if not img_data.startswith("data:image"):
                     continue
                 b64 = img_data.split(",", 1)[1]
                 ext = ".png"
@@ -202,6 +224,19 @@ class OpenRouterImageBackend(ImageBackend):
                     handle.write(base64.b64decode(b64))
                 return actual_output
 
+        text_parts: list[str] = []
+        for choice in data.get("choices", []):
+            content = choice.get("message", {}).get("content")
+            if isinstance(content, str):
+                text_parts.append(content)
+            elif isinstance(content, list):
+                for part in content:
+                    if isinstance(part, dict) and part.get("type") == "text":
+                        text_parts.append(str(part.get("text", "")))
+
+        detail = " ".join(part.strip() for part in text_parts if part).strip()
+        if detail:
+            raise RuntimeError(f"Image response did not include an image payload. Text: {detail[:500]}")
         raise RuntimeError("Image response did not include an image payload")
 
 

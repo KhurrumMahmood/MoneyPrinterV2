@@ -32,6 +32,11 @@ from citevideo.backends.factory import (
     get_image_backend,
     get_transcription_backend,
 )
+from citevideo.config import (
+    get_audio_scene_padding_seconds,
+    get_openrouter_audio_model,
+    get_openrouter_audio_voice,
+)
 
 
 def _file_sha256(path: str) -> str:
@@ -42,58 +47,208 @@ def _file_sha256(path: str) -> str:
     return digest.hexdigest()
 
 
-def generate_tts(script: dict, assets_dir: str) -> str:
+def _write_silence_wav(output_path: str, duration_seconds: float, sample_rate: int = 24000) -> float:
+    duration_seconds = max(0.0, float(duration_seconds))
+    silent_frames = b"\x00\x00" * int(sample_rate * duration_seconds)
+    with wave.open(output_path, "wb") as wf:
+        wf.setnchannels(1)
+        wf.setsampwidth(2)
+        wf.setframerate(sample_rate)
+        wf.writeframes(silent_frames)
+    return duration_seconds
+
+
+def _append_silence_to_wav(output_path: str, duration_seconds: float) -> float:
+    duration_seconds = max(0.0, float(duration_seconds))
+    if duration_seconds <= 0:
+        with wave.open(output_path, "rb") as wf:
+            return wf.getnframes() / max(wf.getframerate(), 1)
+
+    with wave.open(output_path, "rb") as wf:
+        nchannels = wf.getnchannels()
+        sampwidth = wf.getsampwidth()
+        framerate = wf.getframerate()
+        frames = wf.readframes(wf.getnframes())
+
+    padding_frames = int(framerate * duration_seconds)
+    padding_bytes = b"\x00" * (padding_frames * sampwidth * nchannels)
+
+    with wave.open(output_path, "wb") as wf:
+        wf.setnchannels(nchannels)
+        wf.setsampwidth(sampwidth)
+        wf.setframerate(framerate)
+        wf.writeframes(frames + padding_bytes)
+
+    return (len(frames) + len(padding_bytes)) / max(framerate * sampwidth * nchannels, 1)
+
+
+def _wav_duration_seconds(path: str) -> float:
+    with wave.open(path, "rb") as wf:
+        return wf.getnframes() / max(wf.getframerate(), 1)
+
+
+def _concat_wav_files(input_paths: list[str], output_path: str) -> float:
+    if not input_paths:
+        return _write_silence_wav(output_path, 1.0)
+
+    frames_chunks: list[bytes] = []
+    params: tuple[int, int, int] | None = None
+    total_frames = 0
+
+    for input_path in input_paths:
+        with wave.open(input_path, "rb") as wf:
+            current = (wf.getnchannels(), wf.getsampwidth(), wf.getframerate())
+            if params is None:
+                params = current
+            elif current != params:
+                raise RuntimeError(
+                    f"Incompatible WAV parameters while concatenating audio: {input_path}"
+                )
+            frame_count = wf.getnframes()
+            frames_chunks.append(wf.readframes(frame_count))
+            total_frames += frame_count
+
+    assert params is not None
+    with wave.open(output_path, "wb") as wf:
+        wf.setnchannels(params[0])
+        wf.setsampwidth(params[1])
+        wf.setframerate(params[2])
+        wf.writeframes(b"".join(frames_chunks))
+
+    return total_frames / max(params[2], 1)
+
+
+def generate_tts(script: dict, assets_dir: str) -> dict:
     """
-    Generate TTS audio for the full script narration.
+    Generate scene-by-scene TTS audio and stitch it into one narration track.
 
-    Concatenates all scene narrations and generates a single WAV file
-    using OpenRouter streaming TTS (pcm16 format).
-
-    Returns path to the output WAV file.
+    Returns:
+        {
+            "wav_path": str,
+            "scene_timings": list[dict],
+            "scene_manifest_path": str,
+        }
     """
-    from citevideo.config import get_openrouter_audio_model
-
-    # Collect all narration text
-    narration_parts = []
-    for scene in script.get("scenes", []):
-        narration = scene.get("narration", "").strip()
-        if narration:
-            narration_parts.append(narration)
-
-    full_narration = "\n\n".join(narration_parts)
-    print(f"  TTS: {len(full_narration)} chars, {len(full_narration.split())} words")
+    scenes = script.get("scenes", [])
+    output_path = os.path.join(assets_dir, "narration.wav")
+    scene_audio_dir = os.path.join(assets_dir, "scene-audio")
+    os.makedirs(scene_audio_dir, exist_ok=True)
 
     model = get_openrouter_audio_model() or "openai/tts-1-hd"
-
-    output_path = os.path.join(assets_dir, "narration.wav")
-    cache_key = build_cache_key("tts", model, full_narration)
-    if restore_cached_file(assets_dir, "audio", cache_key, ".wav", output_path):
-        print(f"  TTS: cache hit ({cache_key[:10]})")
-        return output_path
+    voice = get_openrouter_audio_voice()
+    padding_seconds = get_audio_scene_padding_seconds()
+    print(
+        f"  TTS: {len(scenes)} scenes, model={model}, voice={voice}, "
+        f"scene-padding={padding_seconds:.2f}s"
+    )
 
     try:
         backend = get_audio_backend()
-        backend.synthesize(full_narration, output_path)
-        with wave.open(output_path, "rb") as wf:
-            duration = wf.getnframes() / max(wf.getframerate(), 1)
-        print(f"  TTS: {duration:.1f}s WAV saved to {output_path}")
-        cache_audio_file(assets_dir, cache_key, output_path)
+        scene_timings = []
+        scene_manifest = []
+        scene_audio_paths: list[str] = []
+        current_ms = 0
+
+        for scene in scenes:
+            scene_id = scene.get("scene_id", f"scene_{len(scene_manifest) + 1:03d}")
+            narration = scene.get("narration", "").strip()
+            scene_output_path = os.path.join(scene_audio_dir, f"{scene_id}.wav")
+
+            if narration:
+                cache_key = build_cache_key(
+                    "tts-scene-v2",
+                    model,
+                    voice,
+                    f"{padding_seconds:.2f}",
+                    narration,
+                )
+                cache_hit = restore_cached_file(
+                    assets_dir, "audio", cache_key, ".wav", scene_output_path
+                )
+                if not cache_hit:
+                    backend.synthesize(narration, scene_output_path)
+                    _append_silence_to_wav(scene_output_path, padding_seconds)
+                    cache_audio_file(assets_dir, cache_key, scene_output_path)
+            else:
+                silence_duration = max(
+                    1.0, float(scene.get("duration_estimate_seconds", 3) or 3)
+                )
+                _write_silence_wav(scene_output_path, silence_duration)
+
+            duration_seconds = _wav_duration_seconds(scene_output_path)
+            duration_ms = int(duration_seconds * 1000)
+            scene_timings.append(
+                {
+                    "scene_id": scene_id,
+                    "start_ms": current_ms,
+                    "duration_ms": duration_ms,
+                }
+            )
+            scene_manifest.append(
+                {
+                    "scene_id": scene_id,
+                    "audio_path": scene_output_path,
+                    "duration_ms": duration_ms,
+                    "has_narration": bool(narration),
+                }
+            )
+            scene_audio_paths.append(scene_output_path)
+            current_ms += duration_ms
+
+        duration = _concat_wav_files(scene_audio_paths, output_path)
+        scene_manifest_path = os.path.join(assets_dir, "scene_audio_manifest.json")
+        with open(scene_manifest_path, "w", encoding="utf-8") as handle:
+            json.dump(
+                {
+                    "model": model,
+                    "voice": voice,
+                    "scene_padding_seconds": padding_seconds,
+                    "total_duration_ms": current_ms,
+                    "scenes": scene_manifest,
+                },
+                handle,
+                indent=2,
+            )
+        print(f"  TTS: stitched {len(scene_audio_paths)} scene clips into {duration:.1f}s WAV")
 
     except Exception as e:
         print(f"  TTS FAILED: {e}")
         print(f"  Generating silent placeholder WAV so pipeline can continue...")
         # Generate a placeholder WAV (5 minutes of silence) so downstream steps work
-        sample_rate = 24000
         duration_s = 300  # 5 minutes
-        silent_frames = b"\x00\x00" * (sample_rate * duration_s)
-        with wave.open(output_path, "wb") as wf:
-            wf.setnchannels(1)
-            wf.setsampwidth(2)
-            wf.setframerate(sample_rate)
-            wf.writeframes(silent_frames)
+        _write_silence_wav(output_path, duration_s)
         print(f"  Placeholder WAV: {duration_s}s silence saved to {output_path}")
+        scene_timings = []
+        current_ms = 0
+        for scene in scenes:
+            duration_ms = int(float(scene.get("duration_estimate_seconds", 10) or 10) * 1000)
+            scene_timings.append(
+                {
+                    "scene_id": scene.get("scene_id"),
+                    "start_ms": current_ms,
+                    "duration_ms": duration_ms,
+                }
+            )
+            current_ms += duration_ms
+        scene_manifest_path = os.path.join(assets_dir, "scene_audio_manifest.json")
+        with open(scene_manifest_path, "w", encoding="utf-8") as handle:
+            json.dump(
+                {
+                    "model": model,
+                    "voice": voice,
+                    "scene_padding_seconds": padding_seconds,
+                    "total_duration_ms": current_ms,
+                    "scenes": [],
+                },
+                handle,
+                indent=2,
+            )
 
-    return output_path
+    return {
+        "wav_path": output_path,
+        "scene_timings": scene_timings,
+        "scene_manifest_path": scene_manifest_path,
+    }
 
 
 def generate_subtitles(wav_path: str, assets_dir: str) -> str:
@@ -204,7 +359,7 @@ def generate_images(script: dict, assets_dir: str, brand_colors: dict = None) ->
     return image_map
 
 
-def compute_scene_timings(script: dict, srt_path: str) -> list:
+def compute_scene_timings(script: dict, srt_path: str, precomputed_timings: list | None = None) -> list:
     """
     Compute per-scene timing from the SRT file and narration text.
 
@@ -214,6 +369,11 @@ def compute_scene_timings(script: dict, srt_path: str) -> list:
     Returns list of {scene_id, start_ms, duration_ms}.
     """
     scenes = script.get("scenes", [])
+
+    if precomputed_timings:
+        total_ms = sum(int(item.get("duration_ms", 0)) for item in precomputed_timings)
+        print(f"  Timing: using scene-audio timings ({len(precomputed_timings)} scenes, {total_ms/1000:.1f}s)")
+        return precomputed_timings
 
     # Parse SRT
     subtitles = []
@@ -319,7 +479,8 @@ def generate_all_assets(run_dir: str) -> dict:
 
     # Generate TTS
     print("\n--- TTS ---")
-    wav_path = generate_tts(script, assets_dir)
+    tts_bundle = generate_tts(script, assets_dir)
+    wav_path = tts_bundle["wav_path"]
 
     # Generate subtitles
     print("\n--- Subtitles ---")
@@ -331,7 +492,7 @@ def generate_all_assets(run_dir: str) -> dict:
 
     # Compute scene timings
     print("\n--- Scene Timing ---")
-    timings = compute_scene_timings(script, srt_path)
+    timings = compute_scene_timings(script, srt_path, precomputed_timings=tts_bundle["scene_timings"])
 
     # Save asset manifest
     manifest = {
@@ -339,6 +500,7 @@ def generate_all_assets(run_dir: str) -> dict:
         "srt_path": srt_path,
         "image_map": image_map,
         "timings": timings,
+        "scene_audio_manifest_path": tts_bundle["scene_manifest_path"],
         "script_used": os.path.basename(script_path),
     }
     manifest_path = os.path.join(assets_dir, "manifest.json")

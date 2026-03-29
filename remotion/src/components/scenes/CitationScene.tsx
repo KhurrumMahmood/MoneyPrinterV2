@@ -13,6 +13,8 @@ import { GrainOverlay } from "../shared/GrainOverlay";
 import { KineticCaptions } from "../shared/KineticCaptions";
 import { EvidenceBadge } from "../shared/EvidenceBadge";
 import { FallbackEvidencePanel } from "../shared/FallbackEvidencePanel";
+import { StructuredVisualLayer } from "../shared/StructuredVisualLayer";
+import { getScenePalette } from "../shared/sceneStyle";
 import { useLayout } from "../../hooks/useLayout";
 
 interface Props {
@@ -24,6 +26,7 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
   const { colors, fonts } = brand;
+  const palette = getScenePalette(scene, brand);
 
   const layout = useLayout();
   const cardSpring = spring({ frame, fps, config: { damping: 12, stiffness: 60 } });
@@ -35,7 +38,7 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
   });
 
   return (
-    <AbsoluteFill style={{ backgroundColor: colors.primary }}>
+    <AbsoluteFill style={{ backgroundColor: palette.background }}>
       {/* ── Background image with Ken Burns ── */}
       {scene.imagePath && (
         <Img
@@ -52,10 +55,12 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
         />
       )}
 
+      <StructuredVisualLayer scene={scene} brand={brand} layout="split" emphasize="right" />
+
       {/* ── Gradient overlay ── */}
       <AbsoluteFill
         style={{
-          background: `linear-gradient(180deg, ${colors.primary}60 0%, ${colors.primary}40 40%, ${colors.primary}80 100%)`,
+          background: `linear-gradient(180deg, ${palette.background}55 0%, ${palette.background}28 36%, ${palette.backgroundAlt}da 100%)`,
         }}
       />
 
@@ -91,12 +96,12 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
             style={{
               width: 32,
               height: 2,
-              backgroundColor: colors.accent,
+              backgroundColor: palette.accent,
             }}
           />
           <span
             style={{
-              color: colors.textSecondary,
+              color: palette.textMuted,
               fontFamily: fonts.body,
               fontSize: 16,
               textTransform: "uppercase",
@@ -121,6 +126,7 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
             opacity: cardSpring,
             position: "relative",
             backdropFilter: "blur(12px)",
+            marginLeft: "28%",
           }}
         >
           {/* Evidence strength pip */}
@@ -140,7 +146,7 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
           {citation && (
             <div
               style={{
-                color: colors.accent,
+                color: palette.accent,
                 fontFamily: fonts.body,
                 fontSize: layout.citationTitleFontSize,
                 fontWeight: 600,
@@ -151,7 +157,7 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
             >
               {citation.label}
               {citation.detail && (
-                <span style={{ color: colors.textSecondary, fontWeight: 400 }}>
+                <span style={{ color: palette.textMuted, fontWeight: 400 }}>
                   {" "}
                   — {citation.detail}
                 </span>
@@ -162,13 +168,13 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
           {/* Main quote/claim */}
           <div
             style={{
-              color: colors.text,
+              color: palette.text,
               fontFamily: fonts.heading,
               fontSize: layout.bodyFontSize,
               fontWeight: 600,
               lineHeight: 1.4,
               marginBottom: 28,
-              borderLeft: `3px solid ${colors.accent}`,
+              borderLeft: `3px solid ${palette.accent}`,
               paddingLeft: 24,
               textShadow: "0 2px 8px rgba(0,0,0,0.3)",
             }}
@@ -180,7 +186,7 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
           {!(scene.wordTimings && scene.wordTimings.length > 0) && scene.narration ? (
             <p
               style={{
-                color: colors.textSecondary,
+                color: palette.textMuted,
                 fontFamily: fonts.body,
                 fontSize: layout.bodyFontSize - 4,
                 lineHeight: 1.6,
@@ -202,7 +208,7 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
             <div
               style={{
                 marginTop: 24,
-                color: colors.textSecondary,
+                color: palette.textMuted,
                 fontFamily: fonts.body,
                 fontSize: 16,
                 opacity: interpolate(frame, [25, 40], [0, 0.6], {
@@ -226,7 +232,7 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
           left: 0,
           right: 0,
           height: "35%",
-          background: `linear-gradient(transparent, ${colors.primary}dd)`,
+          background: `linear-gradient(transparent, ${palette.background}e0)`,
           pointerEvents: "none",
         }}
       />
@@ -245,7 +251,12 @@ export const CitationScene: React.FC<Props> = ({ scene, brand }) => {
         >
           <KineticCaptions
             wordTimings={scene.wordTimings}
-            colors={colors}
+            colors={{
+              ...colors,
+              text: palette.text,
+              textSecondary: palette.textMuted,
+              accent: palette.accent,
+            }}
             fonts={fonts}
           />
         </div>

@@ -219,6 +219,7 @@ def run_phase_3(run_dir: str):
     from citevideo.production.scriptwriter import write_script
     from citevideo.production.script_reviewer import review_and_revise
     from citevideo.production.script_factchecker import factcheck_and_fix
+    from citevideo.review import run_script_board
 
     print("\n=== Phase 3a: Script draft 1 ===")
     write_script(run_dir)
@@ -228,6 +229,9 @@ def run_phase_3(run_dir: str):
 
     print("\n=== Phase 3c: Fact-check → draft 3 ===")
     script = factcheck_and_fix(run_dir)
+
+    print("\n=== Phase 3d: Script review board ===")
+    run_script_board(run_dir)
     run_package_exports(run_dir)
     return script
 
@@ -236,12 +240,15 @@ def run_phase_4(run_dir: str):
     """Phase 4: Asset generation + spec assembly."""
     from citevideo.production.asset_generator import generate_all_assets
     from citevideo.production.spec_builder import build_spec
+    from citevideo.review import run_frame_board
 
     print("\n=== Phase 4a: Asset generation ===")
     generate_all_assets(run_dir)
 
     print("\n=== Phase 4c: Spec assembly ===")
     spec = build_spec(run_dir)
+    print("\n=== Phase 4d: Frame review board ===")
+    run_frame_board(run_dir)
     run_package_exports(run_dir)
     return spec
 
@@ -249,6 +256,7 @@ def run_phase_4(run_dir: str):
 def run_phase_5(run_dir: str):
     """Phase 5: Remotion rendering."""
     import subprocess as sp
+    from citevideo.review import run_preview_board
 
     prod_dir = os.path.join(run_dir, "production")
     spec_path = os.path.join(prod_dir, "spec.json")
@@ -329,6 +337,7 @@ def run_phase_5(run_dir: str):
         return None
 
     print(f"  Render complete: {output_path}")
+    run_preview_board(run_dir, output_path)
     return output_path
 
 

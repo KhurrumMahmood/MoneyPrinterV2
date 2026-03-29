@@ -9,7 +9,7 @@ interface Props {
 export const FallbackEvidencePanel: React.FC<Props> = ({ scene, brand }) => {
   const { colors, fonts } = brand;
   const hasPanel =
-    !!scene.citationCard ||
+    (!!scene.citationCard && !(scene.citations && scene.citations.length > 0)) ||
     (scene.safetyFlags && scene.safetyFlags.length > 0) ||
     (scene.evidenceIds && scene.evidenceIds.length > 0) ||
     !!scene.ctaTarget;
@@ -22,12 +22,13 @@ export const FallbackEvidencePanel: React.FC<Props> = ({ scene, brand }) => {
     <div
       style={{
         position: "absolute",
-        left: 72,
-        bottom: 96,
-        maxWidth: 520,
+        right: 72,
+        bottom: 86,
+        maxWidth: 420,
         display: "flex",
         flexDirection: "column",
-        gap: 14,
+        gap: 12,
+        alignItems: "flex-end",
       }}
     >
       {scene.citationCard && (
@@ -36,7 +37,7 @@ export const FallbackEvidencePanel: React.FC<Props> = ({ scene, brand }) => {
             backgroundColor: `${colors.primary}cc`,
             border: `1px solid ${colors.accent}55`,
             borderRadius: 18,
-            padding: "20px 24px",
+            padding: "16px 20px",
             backdropFilter: "blur(12px)",
           }}
         >
@@ -44,7 +45,7 @@ export const FallbackEvidencePanel: React.FC<Props> = ({ scene, brand }) => {
             style={{
               color: colors.accent,
               fontFamily: fonts.body,
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: 700,
               letterSpacing: 1.5,
               marginBottom: 8,
@@ -56,7 +57,7 @@ export const FallbackEvidencePanel: React.FC<Props> = ({ scene, brand }) => {
             style={{
               color: colors.text,
               fontFamily: fonts.heading,
-              fontSize: 26,
+              fontSize: 22,
               fontWeight: 700,
               lineHeight: 1.3,
             }}
@@ -68,7 +69,7 @@ export const FallbackEvidencePanel: React.FC<Props> = ({ scene, brand }) => {
               style={{
                 color: colors.textSecondary,
                 fontFamily: fonts.body,
-                fontSize: 18,
+                fontSize: 16,
                 marginTop: 8,
                 lineHeight: 1.4,
               }}
@@ -85,7 +86,7 @@ export const FallbackEvidencePanel: React.FC<Props> = ({ scene, brand }) => {
             backgroundColor: `${colors.danger}18`,
             border: `1px solid ${colors.danger}55`,
             borderRadius: 18,
-            padding: "18px 22px",
+            padding: "16px 20px",
             backdropFilter: "blur(12px)",
           }}
         >
@@ -93,7 +94,7 @@ export const FallbackEvidencePanel: React.FC<Props> = ({ scene, brand }) => {
             style={{
               color: colors.danger,
               fontFamily: fonts.body,
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: 700,
               letterSpacing: 1.5,
               marginBottom: 8,
@@ -105,7 +106,7 @@ export const FallbackEvidencePanel: React.FC<Props> = ({ scene, brand }) => {
             style={{
               color: colors.text,
               fontFamily: fonts.body,
-              fontSize: 20,
+              fontSize: 18,
               lineHeight: 1.5,
             }}
           >

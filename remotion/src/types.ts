@@ -91,6 +91,7 @@ export interface SceneSpec {
   ctaTarget?: string;
   dossierAnchorId?: string;
   evidenceIds?: string[];
+  sceneRegister?: "hook" | "kitchen" | "clinical" | "warning" | "action" | "neutral";
 }
 
 // ── Source ────────────────────────────────────────────────────────────────

@@ -13,6 +13,8 @@ import type { SceneSpec, Brand, BrandColors } from "../../types";
 import { GrainOverlay } from "../shared/GrainOverlay";
 import { EvidenceBadge } from "../shared/EvidenceBadge";
 import { FallbackEvidencePanel } from "../shared/FallbackEvidencePanel";
+import { StructuredVisualLayer } from "../shared/StructuredVisualLayer";
+import { deriveKeywords, getScenePalette } from "../shared/sceneStyle";
 
 interface Props {
   scene: SceneSpec;
@@ -329,6 +331,8 @@ export const InfographicScene: React.FC<Props> = ({ scene, brand }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const { colors, fonts } = brand;
+  const palette = getScenePalette(scene, brand);
+  const keywords = deriveKeywords(scene);
 
   const cardAccentColors = [colors.accent, "#4DA8DA", colors.warning, colors.danger];
 
@@ -346,6 +350,78 @@ export const InfographicScene: React.FC<Props> = ({ scene, brand }) => {
     .filter((s) => s.trim().length > 0)
     .slice(0, 4);
 
+  if (scene.visualType === "comparison_table" || narrationParts.length === 0) {
+    return (
+      <AbsoluteFill style={{ backgroundColor: palette.background }}>
+        <StructuredVisualLayer scene={scene} brand={brand} layout="full" emphasize="center" />
+        <AbsoluteFill
+          style={{
+            background: `linear-gradient(180deg, ${palette.background}2a 0%, ${palette.background}c8 100%)`,
+          }}
+        />
+        <GrainOverlay />
+        <EvidenceBadge scene={scene} brand={brand} />
+        <div
+          style={{
+            position: "absolute",
+            top: 88,
+            left: 96,
+            color: palette.text,
+            fontFamily: fonts.heading,
+            fontSize: 54,
+            fontWeight: 800,
+            maxWidth: 760,
+            lineHeight: 1.1,
+            letterSpacing: -0.8,
+          }}
+        >
+          {scene.heading}
+        </div>
+        {keywords.length > 0 && (
+          <div
+            style={{
+              position: "absolute",
+              top: 176,
+              left: 96,
+              display: "flex",
+              gap: 12,
+            }}
+          >
+            {keywords.slice(0, 3).map((keyword) => (
+              <div
+                key={keyword}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 999,
+                  background: `${palette.surface}cc`,
+                  border: `1px solid ${palette.accent}35`,
+                  color: palette.textMuted,
+                  fontSize: 15,
+                  fontWeight: 700,
+                  letterSpacing: 1.3,
+                  textTransform: "uppercase",
+                }}
+              >
+                {keyword}
+              </div>
+            ))}
+          </div>
+        )}
+        <div
+          style={{
+            position: "absolute",
+            left: 72,
+            right: 72,
+            bottom: 28,
+            height: 2,
+            borderRadius: 999,
+            background: `linear-gradient(90deg, transparent, ${palette.rule}, transparent)`,
+          }}
+        />
+      </AbsoluteFill>
+    );
+  }
+
   // Ken Burns on background
   const bgScale = interpolate(frame, [0, scene.durationFrames], [1.0, 1.06], {
     extrapolateRight: "clamp",
@@ -358,7 +434,7 @@ export const InfographicScene: React.FC<Props> = ({ scene, brand }) => {
   const lineDelay = 10 + 2 * cardStaggerFrames;
 
   return (
-    <AbsoluteFill style={{ backgroundColor: colors.primary }}>
+    <AbsoluteFill style={{ backgroundColor: palette.background }}>
       {/* ── Background image at 15% opacity ── */}
       {scene.imagePath && (
         <Img
@@ -378,7 +454,7 @@ export const InfographicScene: React.FC<Props> = ({ scene, brand }) => {
       {/* ── Gradient overlay ── */}
       <AbsoluteFill
         style={{
-          background: `linear-gradient(160deg, ${colors.primary}f2 0%, ${colors.secondary || colors.primary}e8 100%)`,
+          background: `linear-gradient(160deg, ${palette.background}f2 0%, ${palette.backgroundAlt}e8 100%)`,
         }}
       />
 

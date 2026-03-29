@@ -21,9 +21,16 @@ except ImportError:  # pragma: no cover - optional dependency in lightweight set
     def load_dotenv(*_args, **_kwargs):
         return False
 
-# Load .env from project root
+# Load .env from project root, then fall back to the primary repo when
+# working inside a sibling worktree that does not carry its own .env file.
 _root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-load_dotenv(os.path.join(_root, ".env"))
+_primary_repo = "/Users/khurrummahmood/Projects/MoneyPrinterV2"
+for _env_path in (
+    os.path.join(_root, ".env"),
+    os.path.join(_primary_repo, ".env"),
+):
+    if os.path.exists(_env_path):
+        load_dotenv(_env_path)
 
 ROOT_DIR = _root
 WORKSPACE_DIR = os.path.join(ROOT_DIR, "workspace")
@@ -42,6 +49,9 @@ def get_openrouter_image_model() -> str:
 
 def get_openrouter_audio_model() -> str:
     return os.environ.get("OPENROUTER_AUDIO_MODEL", "")
+
+def get_openrouter_audio_voice() -> str:
+    return os.environ.get("OPENROUTER_AUDIO_VOICE", "alloy").strip() or "alloy"
 
 def get_openrouter_research_model() -> str:
     return os.environ.get("OPENROUTER_RESEARCH_MODEL", "perplexity/sonar-deep-research")
@@ -80,6 +90,15 @@ def get_review_backend_name() -> str:
 def get_audio_backend_name() -> str:
     """Default audio generation backend for paid media."""
     return os.environ.get("CITEVIDEO_AUDIO_BACKEND", "openrouter-audio").strip().lower()
+
+
+def get_audio_scene_padding_seconds() -> float:
+    """Default breathing room appended between scene narration clips."""
+    try:
+        value = float(os.environ.get("CITEVIDEO_AUDIO_SCENE_PADDING_SECONDS", "0.75"))
+    except ValueError:
+        value = 0.75
+    return max(0.0, value)
 
 
 def get_transcription_backend_name() -> str:

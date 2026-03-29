@@ -12,15 +12,31 @@ import {
 import type { SceneSpec, Brand, BrandColors } from "../../types";
 import { GrainOverlay } from "../shared/GrainOverlay";
 import { KineticCaptions } from "../shared/KineticCaptions";
-import { KeywordOverlay } from "../shared/KeywordOverlay";
 import { EvidenceBadge } from "../shared/EvidenceBadge";
 import { FallbackEvidencePanel } from "../shared/FallbackEvidencePanel";
+import { StructuredVisualLayer } from "../shared/StructuredVisualLayer";
+import { deriveKeywords, getScenePalette, resolveSceneRegister } from "../shared/sceneStyle";
 import { useLayout } from "../../hooks/useLayout";
 
 interface Props {
   scene: SceneSpec;
   brand: Brand;
 }
+
+const RULE_LABELS = [
+  {
+    title: "Pair",
+    detail: "Put protein, fat, or fiber next to the carbs.",
+  },
+  {
+    title: "Order",
+    detail: "Veg first. Protein next. Carbs last.",
+  },
+  {
+    title: "Choose",
+    detail: "Keep the grain intact whenever you can.",
+  },
+];
 
 // ── Safety warning stamp effect ─────────────────────────────────────────
 const SAFETY_KEYWORDS = ["HIDDEN", "RECKLESS", "DANGEROUS", "WARNING", "TOXIC", "HARMFUL"];
@@ -120,20 +136,21 @@ const SentenceCard: React.FC<{
       style={{
         opacity,
         transform: `translateY(${translateY}px)`,
-        padding: "28px 36px",
-        backgroundColor: `${colors.text}08`,
-        border: `1px solid ${colors.text}12`,
+        padding: "24px 28px",
+        backgroundColor: `${colors.text}07`,
+        border: `1px solid ${colors.text}10`,
         borderLeft: `3px solid ${accentColor}`,
-        borderRadius: 12,
-        backdropFilter: "blur(4px)",
-        maxWidth: 960,
+        borderRadius: 18,
+        backdropFilter: "blur(6px)",
+        maxWidth: 720,
+        boxShadow: "0 22px 42px rgba(0,0,0,0.18)",
       }}
     >
       <div
         style={{
           fontFamily: fonts.body,
-          fontSize: 30,
-          lineHeight: 1.6,
+          fontSize: 28,
+          lineHeight: 1.55,
           color: colors.text,
           letterSpacing: 0.2,
         }}
@@ -183,6 +200,64 @@ function highlightKeyPhrases(
   }
 
   return parts.length > 0 ? <>{parts}</> : text;
+}
+
+function buildSentenceChunks(narration: string): string[] {
+  const raw = narration
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter((sentence) => sentence.length > 0);
+
+  const merged: string[] = [];
+  for (let index = 0; index < raw.length; index += 1) {
+    const sentence = raw[index];
+    const shortSentence =
+      sentence.length < 26 || sentence.split(/\s+/).length <= 3;
+    const next = raw[index + 1];
+
+    if (shortSentence && merged.length === 0 && next) {
+      merged.push(`${sentence} ${next}`.trim());
+      index += 1;
+      continue;
+    }
+
+    if (shortSentence && merged.length > 0 && merged[merged.length - 1].length < 110) {
+      merged[merged.length - 1] = `${merged[merged.length - 1]} ${sentence}`.trim();
+      continue;
+    }
+
+    merged.push(sentence);
+  }
+
+  return merged;
+}
+
+function buildImageLeadChipLabels(scene: SceneSpec): string[] {
+  const text = `${scene.heading} ${scene.narration} ${scene.visualNotes}`.toLowerCase();
+
+  if (text.includes("fat") || text.includes("fiber")) {
+    return ["Avocado", "Nuts", "Beans", "Seeds"];
+  }
+
+  if (text.includes("protein")) {
+    return ["Egg", "Tofu", "Chicken", "Shake"];
+  }
+
+  if (text.includes("order")) {
+    return ["Veg First", "Protein", "Carbs Last"];
+  }
+
+  if (text.includes("grain") || text.includes("fruit")) {
+    return ["Intact Grain", "Whole Fruit", "Less Processed"];
+  }
+
+  const fallback = scene.keywords && scene.keywords.length > 0
+    ? scene.keywords
+    : deriveKeywords(scene);
+
+  return fallback
+    .filter((item) => !/^(first|rules?|rapid-fire|breakdown)$/i.test(item))
+    .slice(0, 4);
 }
 
 // ── Floating citation card ──────────────────────────────────────────────
@@ -280,22 +355,140 @@ function extractStampWords(heading: string): string[] {
   return [];
 }
 
+const RulesOverview: React.FC<{
+  frame: number;
+  fps: number;
+  accent: string;
+  text: string;
+}> = ({ frame, fps, accent, text }) => (
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 16,
+      maxWidth: 500,
+      marginTop: 26,
+    }}
+  >
+    {RULE_LABELS.map((rule, index) => {
+      const appear = spring({
+        frame: Math.max(0, frame - (10 + index * 6)),
+        fps,
+        config: { damping: 18, stiffness: 110, mass: 0.85 },
+      });
+
+      return (
+        <div
+          key={rule.title}
+          style={{
+            opacity: appear,
+            transform: `translateY(${interpolate(appear, [0, 1], [28, 0])}px)`,
+            padding: "18px 22px",
+            borderRadius: 24,
+            background: `linear-gradient(90deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03))`,
+            border: `1px solid ${accent}28`,
+            boxShadow: `0 18px 36px ${accent}12`,
+          }}
+        >
+          <div
+            style={{
+              color: "#fff6e9",
+              fontSize: 34,
+              fontWeight: 900,
+              letterSpacing: -0.6,
+              marginBottom: 6,
+            }}
+          >
+            {rule.title}
+          </div>
+          <div
+            style={{
+              color: "rgba(255,244,228,0.86)",
+              fontSize: 20,
+              lineHeight: 1.45,
+            }}
+          >
+            {rule.detail}
+          </div>
+        </div>
+      );
+    })}
+    <div
+      style={{
+        marginTop: 6,
+        padding: "16px 20px",
+        borderRadius: 20,
+        background: `${accent}16`,
+        border: `1px solid ${accent}2e`,
+        color: "#fff7eb",
+        fontSize: 19,
+        fontWeight: 700,
+        lineHeight: 1.45,
+      }}
+    >
+      {text}
+    </div>
+  </div>
+);
+
+const ImageLeadChipRow: React.FC<{
+  items: string[];
+  palette: BrandColors;
+}> = ({ items, palette }) => (
+  <div
+    style={{
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 12,
+      maxWidth: 760,
+      marginTop: 6,
+      marginBottom: 18,
+    }}
+  >
+    {items.map((item, index) => (
+      <div
+        key={item}
+        style={{
+          padding: "10px 16px",
+          borderRadius: 999,
+          background: index % 2 === 0 ? `${palette.accent}20` : `${palette.textSecondary}1c`,
+          border:
+            index % 2 === 0
+              ? `1px solid ${palette.accent}38`
+              : `1px solid ${palette.textSecondary}38`,
+          color: palette.text,
+          fontSize: 15,
+          fontWeight: 800,
+          letterSpacing: 1,
+          textTransform: "uppercase",
+          boxShadow: "0 18px 40px rgba(0,0,0,0.18)",
+          backdropFilter: "blur(12px)",
+        }}
+      >
+        {item}
+      </div>
+    ))}
+  </div>
+);
+
 // ── Main component ──────────────────────────────────────────────────────
 export const TalkingPointScene: React.FC<Props> = ({ scene, brand }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
   const { colors, fonts } = brand;
   const layout = useLayout();
+  const palette = getScenePalette(scene, brand);
+  const register = resolveSceneRegister(scene);
+  const keywords = deriveKeywords(scene);
 
   const isSafety = isSafetyWarning(scene.heading);
   const stampWords = isSafety ? extractStampWords(scene.heading) : [];
   const showStampMode = stampWords.length >= 2;
+  const isRulesScene = scene.heading.toLowerCase().includes("3 rules");
+  const isRapidFireScene = scene.heading.toLowerCase().startsWith("rapid-fire");
 
   // Split narration into sentences
-  const sentences = scene.narration
-    .split(/(?<=[.!?])\s+/)
-    .filter((s) => s.trim().length > 0)
-    .slice(0, 6);
+  const sentences = buildSentenceChunks(scene.narration).slice(0, 5);
 
   // Calculate timing: use actual Sequence duration (not scene.durationFrames which may differ)
   const totalDuration = durationInFrames;
@@ -325,9 +518,26 @@ export const TalkingPointScene: React.FC<Props> = ({ scene, brand }) => {
   );
   const origins = ["center center", "top left", "bottom right", "top right", "bottom left"];
   const bgOrigin = origins[sceneNum % origins.length];
+  const showImageLedPortrait =
+    layout.isPortrait && Boolean(scene.imagePath) && !showStampMode;
+  const leadChipLabels = isRulesScene
+    ? ["Pair", "Order", "Choose"]
+    : buildImageLeadChipLabels(scene);
+
+  const contentColumnWidth = layout.isPortrait
+    ? showImageLedPortrait
+      ? "100%"
+      : isRulesScene
+      ? "100%"
+      : "54%"
+    : isRulesScene
+      ? "36%"
+      : register === "clinical"
+        ? "46%"
+        : "40%";
 
   return (
-    <AbsoluteFill style={{ backgroundColor: colors.primary }}>
+    <AbsoluteFill style={{ backgroundColor: palette.background }}>
       {/* ── Background image at 65% opacity with alternating Ken Burns ── */}
       {scene.imagePath && (
         <Img
@@ -337,19 +547,30 @@ export const TalkingPointScene: React.FC<Props> = ({ scene, brand }) => {
             height: "100%",
             objectFit: "cover",
             position: "absolute",
-            opacity: 0.65,
+            opacity: showImageLedPortrait ? 1 : 0.65,
             transform: `scale(${bgScale})`,
             transformOrigin: bgOrigin,
           }}
         />
       )}
 
+      {!showImageLedPortrait ? (
+        <StructuredVisualLayer
+          scene={scene}
+          brand={brand}
+          layout={layout.isPortrait ? "full" : "split"}
+          emphasize={layout.isPortrait ? "center" : "right"}
+        />
+      ) : null}
+
       {/* ── Gradient overlay — light enough to let background show clearly ── */}
       <AbsoluteFill
         style={{
           background: showStampMode
-            ? `linear-gradient(160deg, ${colors.primary}c0 0%, #1a0a0a 100%)`
-            : `linear-gradient(160deg, ${colors.primary}50 0%, ${colors.secondary || colors.primary}30 50%, ${colors.primary}70 100%)`,
+            ? `linear-gradient(160deg, ${palette.background}c4 0%, ${palette.backgroundAlt}ea 100%)`
+            : showImageLedPortrait
+              ? `linear-gradient(180deg, ${palette.background}94 0%, ${palette.background}14 28%, ${palette.background}10 64%, ${palette.background}dd 100%)`
+              : `linear-gradient(160deg, ${palette.background}58 0%, ${palette.backgroundAlt}2c 52%, ${palette.background}88 100%)`,
         }}
       />
 
@@ -362,25 +583,57 @@ export const TalkingPointScene: React.FC<Props> = ({ scene, brand }) => {
       <AbsoluteFill style={{ padding: layout.contentPadding }}>
         {/* ── Heading with accent border ── */}
         {!showStampMode && (
-          <h2
-            style={{
-              color: colors.text,
-              fontFamily: fonts.heading,
-              fontSize: layout.h2FontSize,
-              fontWeight: 800,
-              marginBottom: 44,
-              marginTop: 10,
-              transform: `translateX(${headingSlideX}px)`,
-              opacity: headingSpring,
-              borderLeft: `4px solid ${colors.accent}`,
-              paddingLeft: 28,
-              lineHeight: 1.2,
-              letterSpacing: -0.5,
-              textShadow: "0 2px 16px rgba(0,0,0,0.3)",
-            }}
-          >
-            {scene.heading}
-          </h2>
+          <div style={{ maxWidth: showImageLedPortrait ? "74%" : isRulesScene ? "34%" : "44%" }}>
+            {isRapidFireScene ? (
+              <div
+                style={{
+                  color: palette.textMuted,
+                  fontFamily: fonts.body,
+                  fontSize: 14,
+                  fontWeight: 700,
+                  letterSpacing: 3,
+                  textTransform: "uppercase",
+                  marginTop: 6,
+                  marginBottom: 18,
+                  opacity: headingSpring,
+                }}
+              >
+                Rapid-Fire Breakdown
+              </div>
+            ) : null}
+            <h2
+              style={{
+                color: palette.text,
+                fontFamily: fonts.heading,
+                fontSize: layout.h2FontSize,
+                fontWeight: 800,
+                marginBottom: isRulesScene ? 28 : 44,
+                marginTop: 10,
+                transform: `translateX(${headingSlideX}px)`,
+                opacity: headingSpring,
+                borderLeft: `4px solid ${palette.accent}`,
+                paddingLeft: 28,
+                lineHeight: 1.15,
+                letterSpacing: -0.6,
+                textShadow: "0 2px 16px rgba(0,0,0,0.3)",
+                maxWidth: "100%",
+              }}
+            >
+              {scene.heading}
+            </h2>
+            {showImageLedPortrait && leadChipLabels.length > 0 ? (
+              <ImageLeadChipRow
+                items={leadChipLabels}
+                palette={{
+                  ...colors,
+                  text: palette.text,
+                  textSecondary: palette.textMuted,
+                  accent: palette.accent,
+                  danger: palette.danger,
+                }}
+              />
+            ) : null}
+          </div>
         )}
 
         {/* ── Safety stamp mode ── */}
@@ -434,28 +687,70 @@ export const TalkingPointScene: React.FC<Props> = ({ scene, brand }) => {
               flex: 1,
               display: "flex",
               flexDirection: "column",
-              justifyContent: showStampMode ? "flex-start" : "center",
+              justifyContent: showStampMode ? "flex-start" : layout.isPortrait ? "flex-end" : "center",
               gap: 16,
               marginTop: showStampMode ? 16 : 0,
+              maxWidth: showImageLedPortrait ? "72%" : contentColumnWidth,
+              width: layout.isPortrait ? "100%" : undefined,
             }}
           >
-            {sentences.map((sentence, i) => {
-              const enterFrame = contentStartFrame + i * sentenceDuration;
-              const exitFrame = enterFrame + sentenceDuration;
-              return (
-                <SentenceCard
-                  key={i}
-                  text={sentence}
+            {isRulesScene ? (
+              layout.isPortrait ? (
+                <div
+                  style={{
+                    marginTop: "auto",
+                    maxWidth: showImageLedPortrait ? 620 : 520,
+                    padding: showImageLedPortrait ? "22px 24px" : "18px 20px",
+                    borderRadius: 22,
+                    background: showImageLedPortrait
+                      ? `${palette.background}ba`
+                      : `${palette.surface}d0`,
+                    border: `1px solid ${palette.accent}${showImageLedPortrait ? "30" : "20"}`,
+                    color: palette.text,
+                    fontFamily: fonts.body,
+                    fontSize: showImageLedPortrait ? 28 : 24,
+                    fontWeight: 700,
+                    lineHeight: 1.45,
+                    boxShadow: showImageLedPortrait
+                      ? "0 24px 56px rgba(0,0,0,0.24)"
+                      : "0 18px 40px rgba(0,0,0,0.18)",
+                  }}
+                >
+                  We checked 37 blood sugar hacks. These 3 ideas kept surviving.
+                </div>
+              ) : (
+                <RulesOverview
                   frame={frame}
                   fps={fps}
-                  enterFrame={enterFrame}
-                  exitFrame={exitFrame}
-                  fonts={fonts}
-                  accentColor={showStampMode ? colors.danger : colors.accent}
-                  colors={colors}
+                  accent={palette.accent}
+                  text="We checked 37 blood sugar hacks. These 3 ideas kept surviving."
                 />
-              );
-            })}
+              )
+            ) : (
+              sentences.map((sentence, i) => {
+                const enterFrame = contentStartFrame + i * sentenceDuration;
+                const exitFrame = enterFrame + sentenceDuration;
+                return (
+                  <SentenceCard
+                    key={i}
+                    text={sentence}
+                    frame={frame}
+                    fps={fps}
+                    enterFrame={enterFrame}
+                    exitFrame={exitFrame}
+                    fonts={fonts}
+                    accentColor={showStampMode ? palette.danger : palette.accent}
+                    colors={{
+                      ...colors,
+                      text: palette.text,
+                      textSecondary: palette.textMuted,
+                      accent: palette.accent,
+                      danger: palette.danger,
+                    }}
+                  />
+                );
+              })
+            )}
           </div>
         )}
 
@@ -481,7 +776,12 @@ export const TalkingPointScene: React.FC<Props> = ({ scene, brand }) => {
                 fps={fps}
                 delay={contentEndFrame + i * 6}
                 fonts={fonts}
-                colors={colors}
+                colors={{
+                  ...colors,
+                  text: palette.text,
+                  textSecondary: palette.textMuted,
+                  accent: palette.accent,
+                }}
               />
             ))}
           </div>
@@ -496,7 +796,7 @@ export const TalkingPointScene: React.FC<Props> = ({ scene, brand }) => {
           left: 0,
           right: 0,
           height: "35%",
-          background: `linear-gradient(transparent, ${colors.primary}dd)`,
+          background: `linear-gradient(transparent, ${palette.background}e0)`,
           pointerEvents: "none",
         }}
       />
@@ -515,15 +815,17 @@ export const TalkingPointScene: React.FC<Props> = ({ scene, brand }) => {
         >
           <KineticCaptions
             wordTimings={scene.wordTimings}
-            colors={colors}
+            colors={{
+              ...colors,
+              text: palette.text,
+              textSecondary: palette.textMuted,
+              accent: palette.accent,
+              danger: palette.danger,
+            }}
             fonts={fonts}
-            accentColor={showStampMode ? colors.danger : colors.accent}
+            accentColor={showStampMode ? palette.danger : palette.accent}
           />
         </div>
-      )}
-
-      {scene.keywords && scene.keywords.length > 0 && (
-        <KeywordOverlay keywords={scene.keywords} colors={colors} fonts={fonts} startFrame={28} />
       )}
 
       <FallbackEvidencePanel scene={scene} brand={brand} />

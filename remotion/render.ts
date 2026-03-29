@@ -28,6 +28,7 @@ async function main() {
   const absoluteSpecInput = path.resolve(specFile);
   let publicSpecFile = specFile;
   let frameRange: [number, number] | null = null;
+  let compositionId = "HealthReview";
 
   for (const arg of extraArgs) {
     if (arg.startsWith("--frame-range=")) {
@@ -36,6 +37,9 @@ async function main() {
       if (Number.isFinite(start) && Number.isFinite(end)) {
         frameRange = [start, end];
       }
+    }
+    if (arg.startsWith("--composition=")) {
+      compositionId = arg.slice("--composition=".length) || compositionId;
     }
   }
 
@@ -50,6 +54,7 @@ async function main() {
 
   console.log(`[render] Spec file : ${publicSpecFile}`);
   console.log(`[render] Output    : ${absoluteOutput}`);
+  console.log(`[render] Comp      : ${compositionId}`);
   if (frameRange) {
     console.log(`[render] Frames    : ${frameRange[0]}-${frameRange[1]}`);
   }
@@ -66,7 +71,7 @@ async function main() {
   console.log("[render] Selecting composition...");
   const composition = await selectComposition({
     serveUrl: bundleLocation,
-    id: "HealthReview",
+    id: compositionId,
     inputProps: { specFile: publicSpecFile },
   });
 

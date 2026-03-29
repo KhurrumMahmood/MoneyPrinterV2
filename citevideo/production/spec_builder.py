@@ -10,6 +10,70 @@ import json
 import shutil
 
 
+def _derive_keywords(scene: dict) -> list[str]:
+    existing = scene.get("keywords")
+    if isinstance(existing, list) and existing:
+        return existing[:4]
+
+    heading = (
+        scene.get("heading", "")
+        .replace("Rapid-Fire", "")
+        .replace("—", " ")
+        .replace("-", " ")
+        .replace(":", " ")
+    )
+    heading_words = []
+    for raw_word in heading.split():
+        cleaned = "".join(ch for ch in raw_word if ch.isalnum())
+        if len(cleaned) >= 4 and cleaned.lower() not in {"this", "that", "with", "your", "into", "from"}:
+            heading_words.append(cleaned)
+
+    narration_words = []
+    for word in scene.get("narration", "").replace("—", " ").split():
+        cleaned = "".join(ch for ch in word if ch.isalnum())
+        if len(cleaned) >= 5 and cleaned.lower() not in {
+            "their",
+            "there",
+            "which",
+            "about",
+            "would",
+            "these",
+        }:
+            narration_words.append(cleaned)
+
+    deduped: list[str] = []
+    for word in heading_words + narration_words:
+        title_word = word.title()
+        if title_word not in deduped:
+            deduped.append(title_word)
+        if len(deduped) >= 4:
+            break
+    return deduped
+
+
+def _derive_scene_register(scene: dict, blueprint: dict) -> str:
+    combined = " ".join(
+        [
+            scene.get("heading", ""),
+            scene.get("narration", ""),
+            scene.get("visual_notes", ""),
+            blueprint.get("visual_type", ""),
+        ]
+    ).lower()
+
+    if any(token in combined for token in ("warning", "danger", "safety", "correction", "free pass")):
+        return "warning"
+    if any(token in combined for token in ("swap", "choose", "pair", "order", "lentils", "what you can")):
+        return "action"
+    if scene.get("type") == "citation" or "study" in blueprint.get("visual_type", ""):
+        return "clinical"
+    if scene.get("type") == "title" or blueprint.get("visual_type") == "hook_card":
+        return "hook"
+    if scene.get("mood") in {"hopeful", "excited"} or scene.get("evidence_strength") == "strong":
+        return "kitchen"
+    return "neutral"
+
+
 def build_spec(run_dir: str) -> dict:
     """
     Assemble the Remotion video spec from all production artifacts.
@@ -151,7 +215,7 @@ def build_spec(run_dir: str) -> dict:
             "evidenceColor": strength_colors.get(scene.get("evidence_strength", "none"), "#94a3b8"),
             "claimsReferenced": scene.get("claims_referenced", []),
             "visualNotes": scene.get("visual_notes", ""),
-            "keywords": scene.get("keywords", []),
+            "keywords": _derive_keywords(scene),
             "visualType": blueprint.get("visual_type", "evidence_overlay"),
             "benefitHarmMode": blueprint.get("benefit_harm_mode", "benefit"),
             "citationCard": citation_card,
@@ -161,6 +225,7 @@ def build_spec(run_dir: str) -> dict:
             "ctaTarget": blueprint.get("cta_target", ""),
             "dossierAnchorId": blueprint.get("dossier_anchor_id", f"scene-{scene_id}"),
             "evidenceIds": blueprint.get("evidence_ids", []),
+            "sceneRegister": _derive_scene_register(scene, blueprint),
         }
 
         # Add image path if available

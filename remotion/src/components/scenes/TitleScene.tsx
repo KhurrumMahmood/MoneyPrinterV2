@@ -13,9 +13,10 @@ import type { SceneSpec, Brand, BrandColors } from "../../types";
 import { GrainOverlay } from "../shared/GrainOverlay";
 import { GradientMeshBackground } from "../shared/GradientMeshBackground";
 import { KineticCaptions } from "../shared/KineticCaptions";
-import { KeywordOverlay } from "../shared/KeywordOverlay";
 import { EvidenceBadge } from "../shared/EvidenceBadge";
 import { FallbackEvidencePanel } from "../shared/FallbackEvidencePanel";
+import { StructuredVisualLayer } from "../shared/StructuredVisualLayer";
+import { getScenePalette } from "../shared/sceneStyle";
 import { useLayout } from "../../hooks/useLayout";
 
 interface Props {
@@ -40,7 +41,7 @@ const WordReveal: React.FC<{
       style={{
         display: "flex",
         flexWrap: "wrap",
-        justifyContent: "center",
+        justifyContent: "flex-start",
         gap: "0 20px",
         maxWidth: 960,
         lineHeight: 1.15,
@@ -104,7 +105,7 @@ const TypewriterText: React.FC<{
         color: `${colors.text}cc`,
         fontFamily: fonts.body,
         fontSize: 30,
-        textAlign: "center",
+        textAlign: "left",
         maxWidth: 960,
         lineHeight: 1.7,
         opacity: fadeIn,
@@ -127,6 +128,8 @@ export const TitleScene: React.FC<Props> = ({ scene, brand }) => {
   const { fps, durationInFrames } = useVideoConfig();
   const { colors, fonts } = brand;
   const layout = useLayout();
+  const palette = getScenePalette({ ...scene, sceneRegister: "hook" }, brand);
+  const showImageLedPortrait = layout.isPortrait && Boolean(scene.imagePath);
 
   // Timing
   const words = scene.heading.split(/\s+/);
@@ -153,7 +156,7 @@ export const TitleScene: React.FC<Props> = ({ scene, brand }) => {
     : "";
 
   return (
-    <AbsoluteFill style={{ backgroundColor: colors.primary }}>
+    <AbsoluteFill style={{ backgroundColor: palette.background }}>
       {/* ── Layer 1: Background image with Ken Burns ── */}
       {scene.imagePath ? (
         <Img
@@ -168,17 +171,38 @@ export const TitleScene: React.FC<Props> = ({ scene, brand }) => {
           }}
         />
       ) : (
-        <GradientMeshBackground frame={frame} colors={colors} />
+        <GradientMeshBackground
+          frame={frame}
+          colors={{
+            ...colors,
+            primary: palette.background,
+            secondary: palette.backgroundAlt,
+            accent: palette.accent,
+            text: palette.text,
+            textSecondary: palette.textMuted,
+          }}
+        />
       )}
 
       {/* ── Layer 2: Dark gradient overlay (bottom-heavy) ── */}
       <AbsoluteFill
         style={{
           background: scene.imagePath
-            ? `linear-gradient(180deg, ${colors.primary}90 0%, ${colors.primary}40 30%, ${colors.primary}b0 65%, ${colors.primary}f5 100%)`
-            : `linear-gradient(180deg, transparent 0%, ${colors.primary}60 100%)`,
+            ? showImageLedPortrait
+              ? `linear-gradient(180deg, ${palette.background}8a 0%, ${palette.background}18 26%, ${palette.background}18 62%, ${palette.background}d9 100%)`
+              : `linear-gradient(180deg, ${palette.background}85 0%, ${palette.background}35 24%, ${palette.background}c5 68%, ${palette.background}f2 100%)`
+            : `linear-gradient(180deg, transparent 0%, ${palette.background}55 32%, ${palette.background}e8 100%)`,
         }}
       />
+
+      {!showImageLedPortrait ? (
+        <StructuredVisualLayer
+          scene={{ ...scene, sceneRegister: "hook" }}
+          brand={brand}
+          layout={layout.isPortrait ? "full" : "split"}
+          emphasize={layout.isPortrait ? "center" : "right"}
+        />
+      ) : null}
 
       {/* ── Layer 3: Grain overlay ── */}
       <GrainOverlay />
@@ -188,28 +212,54 @@ export const TitleScene: React.FC<Props> = ({ scene, brand }) => {
       {/* ── Layer 4: Content ── */}
       <AbsoluteFill
         style={{
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
           padding: layout.titlePadding,
+          paddingTop: showImageLedPortrait ? 88 : layout.isPortrait ? 70 : 98,
         }}
       >
+        <div
+          style={{
+            color: palette.textMuted,
+            fontFamily: fonts.body,
+            fontSize: 15,
+            fontWeight: 700,
+            letterSpacing: 3.2,
+            textTransform: "uppercase",
+            marginBottom: 18,
+            opacity: interpolate(frame, [0, 12], [0, 0.92], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
+          }}
+        >
+          Evidence Review
+        </div>
+
         {/* Word-by-word heading reveal */}
-        <WordReveal
-          text={scene.heading}
-          frame={frame}
-          fps={fps}
-          fonts={fonts}
-          colors={colors}
-          startFrame={8}
-        />
+        <div style={{ maxWidth: showImageLedPortrait ? 720 : layout.isPortrait ? 640 : 760 }}>
+          <WordReveal
+            text={scene.heading}
+            frame={frame}
+            fps={fps}
+            fonts={fonts}
+            colors={{
+              ...colors,
+              text: palette.text,
+              accent: palette.accent,
+              textSecondary: palette.textMuted,
+            }}
+            startFrame={8}
+          />
+        </div>
 
         {/* Animated accent line */}
         <div
           style={{
-            width: layout.dividerWidth,
+            width: 132,
             height: 3,
             backgroundColor: "transparent",
-            marginTop: 36,
+            marginTop: 26,
             position: "relative",
             overflow: "hidden",
           }}
@@ -221,25 +271,92 @@ export const TitleScene: React.FC<Props> = ({ scene, brand }) => {
               left: 0,
               width: `${lineProgress * 100}%`,
               height: "100%",
-              background: `linear-gradient(90deg, ${colors.accent}, ${colors.accent}80)`,
+              background: `linear-gradient(90deg, ${palette.accent}, ${palette.accentAlt})`,
               borderRadius: 2,
-              boxShadow: `0 0 12px ${colors.accent}60`,
+              boxShadow: `0 0 16px ${palette.accent}66`,
             }}
           />
         </div>
 
+        <div
+          style={{
+            display: "flex",
+            gap: 14,
+            flexWrap: "wrap",
+            marginTop: 22,
+            maxWidth: 540,
+          }}
+        >
+          {["Same bagel", "Same juice", "Different curve"].map((keyword) => (
+            <div
+              key={keyword}
+              style={{
+                padding: "10px 18px",
+                borderRadius: 999,
+                border: `1px solid ${palette.accent}40`,
+                color: palette.textMuted,
+                background: `${palette.surface}cc`,
+                fontSize: 15,
+                fontWeight: 700,
+                letterSpacing: 1,
+                textTransform: "uppercase",
+              }}
+            >
+              {keyword}
+            </div>
+          ))}
+        </div>
+
         {/* Typewriter fallback (when no word timings) */}
-        {!(scene.wordTimings && scene.wordTimings.length > 0) && firstSentence ? (
-          <div style={{ marginTop: 32 }}>
+        {!(scene.wordTimings && scene.wordTimings.length > 0) &&
+        firstSentence &&
+        !showImageLedPortrait ? (
+          <div
+            style={{
+              marginTop: 26,
+              maxWidth: showImageLedPortrait ? 520 : layout.isPortrait ? 420 : 520,
+              padding: "20px 24px",
+              borderRadius: 22,
+              background: `${palette.surface}c8`,
+              border: `1px solid ${palette.accent}18`,
+              boxShadow: `0 22px 48px ${palette.background}40`,
+            }}
+          >
             <TypewriterText
               text={firstSentence}
               frame={frame}
               startFrame={subtitleStartFrame}
               fonts={fonts}
-              colors={colors}
+              colors={{
+                ...colors,
+                text: palette.text,
+                accent: palette.accent,
+              }}
             />
           </div>
         ) : null}
+
+        <div
+          style={{
+            marginTop: 24,
+            padding: "14px 18px",
+            borderRadius: 18,
+            background: `${palette.accentAlt}14`,
+            border: `1px solid ${palette.accentAlt}26`,
+            color: palette.text,
+            fontFamily: fonts.body,
+            fontSize: 18,
+            fontWeight: 700,
+            letterSpacing: 0.2,
+            maxWidth: showImageLedPortrait ? 420 : layout.isPortrait ? 360 : 420,
+            opacity: interpolate(frame, [18, 34], [0, 1], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            }),
+          }}
+        >
+          We checked dozens of blood sugar hacks. Three held up.
+        </div>
       </AbsoluteFill>
 
       {/* ── Bottom caption gradient ── */}
@@ -250,7 +367,7 @@ export const TitleScene: React.FC<Props> = ({ scene, brand }) => {
           left: 0,
           right: 0,
           height: "35%",
-          background: `linear-gradient(transparent, ${colors.primary}dd)`,
+          background: `linear-gradient(transparent, ${palette.background}e0)`,
           pointerEvents: "none",
         }}
       />
@@ -274,11 +391,6 @@ export const TitleScene: React.FC<Props> = ({ scene, brand }) => {
           />
         </div>
       )}
-
-      {scene.keywords && scene.keywords.length > 0 && (
-        <KeywordOverlay keywords={scene.keywords} colors={colors} fonts={fonts} startFrame={20} />
-      )}
-
       <FallbackEvidencePanel scene={scene} brand={brand} />
     </AbsoluteFill>
   );
